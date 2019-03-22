@@ -1,5 +1,6 @@
 # TetrisAgent
 -Intelligent agent for Tetris
+
 -Currently supports 2 random agents for ALE platform and gym-tetris.
 
 ALE platform source code: 
