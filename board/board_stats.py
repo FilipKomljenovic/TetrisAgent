@@ -10,6 +10,7 @@ class BoardStats:
         self.piece_position = piece_position
 
     def calculate_features(self):
+        self.features = []
         self.features.append(self.landing_height())
         self.features.append(self.eroded_piece_cells())
         self.features.append(self.row_transitions())
@@ -20,21 +21,28 @@ class BoardStats:
         self.features.append(self.hole_depth())
         self.features.append(holes_rows[1])
 
+        print(self.features)
+
+    def set_board(self, board):
+        self.board = self.new_board
+        self.board = board
+
     def holes(self):
         sum = 0
-        rows = []
+        rows = set()
         for y in range(0, self.BOARDWIDTH):
             highest = self.heighest_position(y)
             for x in range(0, highest):
-                if self.board[y][x] == '.':
-                    sum += sum
-                    if not rows[x]:
-                        rows.insert(x, 1)
+                if self.board[x][y] == '.':
+                    sum += 1
+            for x in range(0, self.BOARDHEIGHT):
+                if self.board[x][y] == '.':
+                    rows.add(x)
         return sum, len(rows)
 
     def heighest_position(self, y):
-        for x in range(self.BOARDHEIGHT, 0, -1):
-            if self.board[y][x] != '.':
+        for x in range(self.BOARDHEIGHT - 1, 0, -1):
+            if self.board[x][y] != '.':
                 return x
         return 0
 
@@ -43,16 +51,16 @@ class BoardStats:
         for y in range(0, self.BOARDWIDTH):
             highest = self.heighest_position(y)
             for x in range(0, highest):
-                if self.board[y][x] == '.':
+                if self.board[x][y] == '.':
                     for z in range(x, highest):
-                        if self.board[y][z] != '.':
-                            sum += sum
+                        if self.board[z][y] != '.':
+                            sum += 1
         return sum
 
     def board_wells(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT):
-            for y in range(1, self.BOARDWIDTH - 1):
+        for x in range(0, self.BOARDHEIGHT - 1):
+            for y in range(1, self.BOARDWIDTH - 2):
                 if self.board[x][y] == '.' and self.board[x + 1][y - 1] != '.' and self.board[x + 1][y + 1] != '.':
                     sum = sum + self.found_well(x, y)
         return sum
@@ -63,16 +71,16 @@ class BoardStats:
             for y in range(0, self.BOARDWIDTH - 1):
                 if ((self.board[x][y] == '.' and self.board[x][y + 1] != '.') or (
                         self.board[x][y] != '.' and self.board[x][y + 1] == '.')):
-                    sum += sum
+                    sum += 1
         return sum
 
     def column_transitions(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT - 1):
-            for y in range(0, self.BOARDWIDTH):
-                if ((self.board[y][x] == '.' and self.board[y][x + 1] != '.') or (
-                        self.board[y][x] != '.' and self.board[y][x + 1] == '.')):
-                    sum += sum
+        for x in range(0, self.BOARDHEIGHT):
+            for y in range(0, self.BOARDWIDTH - 1):
+                if ((self.board[x][y] == '.' and self.board[x][y + 1] != '.') or (
+                        self.board[x][y] != '.' and self.board[x][y + 1] == '.')):
+                    sum += 1
         return sum
 
     def found_well(self, x, y):
@@ -83,7 +91,7 @@ class BoardStats:
         depth = 0
         for i in range(x + 1, self.BOARDHEIGHT):
             if self.board[i][y - 1] != '.' and self.board[i][y + 1] != '.':
-                depth += depth
+                depth += 1
 
         return sum(range(1, depth + 1))
 
@@ -97,7 +105,7 @@ class BoardStats:
             for x in range(self.BOARDWIDTH):
                 if self.board[i][x] == '.':
                     break
-            eliminated_rows += eliminated_rows
+            eliminated_rows += 1
             for x in range(self.BOARDWIDTH):
                 if self.board[i][x] == '.' and self.new_board[i][x] != '.':
                     eliminated_piece_parts += 1
