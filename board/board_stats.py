@@ -3,9 +3,9 @@ class BoardStats:
     BOARDHEIGHT = 20
 
     def __init__(self, board, new_board, piece_position):
-        self.board = board
+        self.board = board[::-1]
         self.features = []
-        self.new_board = new_board
+        self.new_board = new_board[::-1]
         # tuple with y0,x0,y1,x1 coordinates of piece
         self.piece_position = piece_position
 
@@ -25,19 +25,21 @@ class BoardStats:
 
     def set_board(self, board):
         self.board = self.new_board
-        self.board = board
+        self.new_board = board[::-1]
 
     def holes(self):
+        print (self.board)
         sum = 0
         rows = set()
         for y in range(0, self.BOARDWIDTH):
-            highest = self.heighest_position(y)
-            for x in range(0, highest):
-                if self.board[x][y] == '.':
+            for x in range(0, self.BOARDHEIGHT - 1):
+                if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
+                    print(self.board[x])
                     sum += 1
             for x in range(0, self.BOARDHEIGHT):
                 if self.board[x][y] == '.':
                     rows.add(x)
+        print('suma rupa je', sum)
         return sum, len(rows)
 
     def heighest_position(self, y):
@@ -62,7 +64,8 @@ class BoardStats:
         for x in range(0, self.BOARDHEIGHT - 1):
             for y in range(1, self.BOARDWIDTH - 2):
                 if self.board[x][y] == '.' and self.board[x + 1][y - 1] != '.' and self.board[x + 1][y + 1] != '.':
-                    sum = sum + self.found_well(x, y)
+                    sum += self.found_well(x, y)
+                    print(sum)
         return sum
 
     def row_transitions(self):
