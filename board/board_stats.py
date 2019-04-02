@@ -2,9 +2,12 @@ class BoardStats:
     BOARDWIDTH = 10
     BOARDHEIGHT = 20
 
-    def __init__(self, board):
+    def __init__(self, board, new_board, piece_position):
         self.board = board
         self.features = []
+        self.new_board = new_board
+        # tuple with y0,x0,y1,x1 coordinates of piece
+        self.piece_position = piece_position
 
     def calculate_features(self):
         self.features.append(self.landing_height())
@@ -28,9 +31,6 @@ class BoardStats:
                     if not rows[x]:
                         rows.insert(x, 1)
         return sum, len(rows)
-
-    def is_covered(self, x):
-        pass
 
     def heighest_position(self, y):
         for x in range(self.BOARDHEIGHT, 0, -1):
@@ -86,3 +86,20 @@ class BoardStats:
                 depth += depth
 
         return sum(range(1, depth + 1))
+
+    def landing_height(self):
+        return self.piece_position[0]
+
+    def eroded_piece_cells(self):
+        eliminated_rows = 0
+        eliminated_piece_parts = 0
+        for i in range(self.piece_position[0], self.piece_position[2]):
+            for x in range(self.BOARDWIDTH):
+                if self.board[i][x] == '.':
+                    break
+            eliminated_rows += eliminated_rows
+            for x in range(self.BOARDWIDTH):
+                if self.board[i][x] == '.' and self.new_board[i][x] != '.':
+                    eliminated_piece_parts += 1
+
+        return eliminated_rows * eliminated_piece_parts
