@@ -39,7 +39,6 @@ class BoardStats:
             for x in range(0, self.BOARDHEIGHT):
                 if self.board[x][y] == '.':
                     rows.add(x)
-        print('suma rupa je', sum)
         return sum, len(rows)
 
     def heighest_position(self, y):

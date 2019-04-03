@@ -1,14 +1,22 @@
 from pieces.piece import Piece
 
 
-class OPiece(Piece):
+class LPiece(Piece):
+    rotations = [0, 1, 2, 3]
+
     def __init__(self, shape, board):
         super().__init__(shape, board)
 
     def fill_configurations(self, board):
         configurations = []
-        for x in range(0, self.BOARDWIDTH - 2):
-            configurations.append(x)
+        for x in range(0, self.BOARDWIDTH - 3):
+            configurations.append((x, x + 2, 'r0'))
+        for x in range(0, self.BOARDWIDTH - 4):
+            configurations.append((x, x + 3, 'r1'))
+        for x in range(0, self.BOARDWIDTH - 3):
+            configurations.append((x, x + 2, 'r2'))
+        for x in range(0, self.BOARDWIDTH - 4):
+            configurations.append((x, x + 3, 'r3'))
         print(configurations)
         return configurations
     #
