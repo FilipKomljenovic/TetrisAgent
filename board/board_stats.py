@@ -99,7 +99,10 @@ class BoardStats:
         return sum(range(1, depth + 1))
 
     def landing_height(self):
-        return self.piece_position[0]
+        if self.piece_position[0] > self.piece_position[2]:
+            return self.piece_position[0]
+        else:
+            return self.piece_position[2]
 
     def eroded_piece_cells(self):
         eliminated_rows = 0

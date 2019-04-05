@@ -33,15 +33,13 @@ class Agent:
             piece_position = self.find_piece_position(self.board, new_board)
             self.board_stats.reset(new_board, piece_position)
             reward = 0
-            r = self.board_stats.calculate_r()
+            self.r += self.board_stats.calculate_r()
             features = self.board_stats.calculate_features()
 
             for i in range(0, len(features)):
                 reward += self.weights[i] * features[i]
             rewards.append((reward, conf))
-
-        rewards.sort(reverse=True)
-        return rewards
+        return max(rewards)
 
     def find_piece_position(self, board, new_board):
         positions = []
@@ -66,8 +64,8 @@ class Agent:
 
     def make_decision(self):
         self.generate_configurations()
-        best = self.calculate_reward()[0]
-        return self.piece.generate_actions(best[1][1], best[1])
+        best = self.calculate_reward()
+        return self.piece.generate_actions(best[1][0], best[1])
 
     def set_board(self, board):
         self.board = board[::-1]

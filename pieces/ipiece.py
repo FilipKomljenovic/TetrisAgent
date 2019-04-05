@@ -14,10 +14,10 @@ class IPiece(Piece):
         configurations = []
         # rotation 0 --> I
         for x in range(0, self.BOARDWIDTH - 1):
-            configurations.append((x, x + 1, '0'))
+            configurations.append((x, x, '0'))
         # rotation 1 --> ----
         for x in range(0, self.BOARDWIDTH - 4):
-            configurations.append((x, x + 4, '1'))
+            configurations.append((x, x + 3, '1'))
         return configurations
 
     def generate_board(self, conf, board):
@@ -61,17 +61,25 @@ class IPiece(Piece):
         return True
 
     def generate_actions(self, column, conf):
+        if not conf[2] == '0':
+            self.HEIGHT = 1
+            self.WIDTH = 4
+        else:
+            self.HEIGHT = 4
+            self.WIDTH = 1
         left = 5 - (self.WIDTH // 2)
         right = 5 + (self.WIDTH // 2)
         actions = []
         if not self.current_rotation == conf[2]:
             actions.append(self.ROTATE_LEFT)
         if column > right:
-            for i in range(right, column + 1):
+            for i in range(right, column + self.WIDTH):
                 actions.append(self.RIGHT)
-        else:
-            diff = right - column
-            for i in range(0, diff):
+        elif column < left:
+            for i in range(0, left - column):
+                actions.append(self.LEFT)
+        elif column > left and column < right:
+            for i in range(left, left + (column - left)):
                 actions.append(self.LEFT)
         return actions
 

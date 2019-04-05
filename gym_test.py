@@ -29,35 +29,36 @@ agent = Agent(env.env.game.board)
 start = timeit.default_timer()
 
 step = 0
-for i in range(1):
+for i in range(10):
+    agent = Agent(env.env.game.board)
     env.reset()
-    # print(env.env.game.falling_piece)
-    # agent.generate_configurations()
+    next_piece = env.env.game.falling_piece
     done = False
     while not env.env.game.is_game_over:
-        board = copy.deepcopy(env.env.game.board)
+        board = env.env.game.board
         for piece in pieces.values():
             piece.set_board(board)
         agent.set_board(board)
-        falling_piece = env.env.game.falling_piece
-        if env.env.game.falling_piece is None:
-            env.env.game.falling_piece = new_piece()
-        piece = pieces[env.env.game.falling_piece['shape']]
-        piece.current_rotation=env.env.game.falling_piece['rotation']
+        piece = pieces[next_piece['shape']]
+        piece.current_rotation = next_piece['rotation']
         agent.set_piece(piece)
         # access to the game board
         # print(env.env.game.board)
         step += 1
         actions = agent.make_decision()
+        if len(actions) == 0:
+            state, reward, done, info = env.env.game.step(3)
         for action in actions:
             state, reward, done, info = env.env.game.step(action)
             env.render('human')
-            time.sleep(0.1)
             if done:
                 break
-        while env.env.game.falling_piece is not None:
-            env.env.game._fall()
+        while env.env.game.falling_piece is not None and not done:
+            state, reward, done, info = env.env.game.step(0)
             env.render('human')
+        next_piece = env.env.game.next_piece
+    step = 0
+    print(agent.r)
 print(step)
 stop = timeit.default_timer()
 print('Time: ', stop - start)

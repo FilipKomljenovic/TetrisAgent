@@ -12,18 +12,18 @@ class TPiece(Piece):
 
     def fill_configurations(self, board):
         configurations = []
-        # rotation 0 --> T
+        # rotation 0 -->  _|_
         for x in range(0, self.BOARDWIDTH - 3):
-            configurations.append((x, x + 3, '0'))
-        # rotation 1 --> _|_
+            configurations.append((x, x + 2, '0'))
+        # rotation 1 -->  |-
         for x in range(0, self.BOARDWIDTH - 3):
-            configurations.append((x, x + 3, '1'))
-        # rotation 2 --> -|
+            configurations.append((x, x + 2, '1'))
+        # rotation 2 -->  T
         for x in range(0, self.BOARDWIDTH - 2):
-            configurations.append((x, x + 2, '2'))
-        # rotation 3 --> |-
+            configurations.append((x, x + 1, '2'))
+        # rotation 3 -->  -|
         for x in range(0, self.BOARDWIDTH - 2):
-            configurations.append((x, x + 2, '3'))
+            configurations.append((x, x + 1, '3'))
 
         return configurations
 
@@ -31,7 +31,7 @@ class TPiece(Piece):
         new_board = copy.deepcopy(board)
         new_board = new_board[::-1]
         height = 0
-        if conf[2] == '0' or conf[2] == '1':
+        if conf[2] == '0' or conf[2] == '2':
             self.HEIGHT = 2
             self.WIDTH = 3
         else:
@@ -41,23 +41,23 @@ class TPiece(Piece):
         for x in range(0, self.BOARDHEIGHT):
             flag = True
             if conf[2] == '0':
-                if self.board[x][conf[0] + 1] != '.' and self.board[x + 1][conf[0]] != '.' \
-                        and self.board[x + 1][conf[0] + 1] != '.' and self.board[x + 1][conf[0] + 2] != '.':
-                    flag = False
-            elif conf[2] == '1':
                 if self.board[x][conf[0]] != '.' and self.board[x][conf[0] + 1] != '.' \
                         and self.board[x][conf[0] + 2] != '.' \
                         and self.board[x + 1][conf[0] + 1] != '.':
                     flag = False
-            elif conf[2] == '2':
+            elif conf[2] == '1':
                 if self.board[x][conf[0] + 1] != '.' and self.board[x + 1][conf[0]] != '.' \
                         and self.board[x + 1][conf[0] + 1] != '.' \
-                        and self.board[x + 2][conf[0] + 1] != '.':
+                        and self.board[x + 2][conf[0]] != '.':
+                    flag = False
+            elif conf[2] == '2':
+                if self.board[x][conf[0] + 1] != '.' and self.board[x + 1][conf[0]] != '.' \
+                        and self.board[x + 1][conf[0] + 1] != '.' and self.board[x + 1][conf[0] + 2] != '.':
                     flag = False
             elif conf[2] == '3':
                 if self.board[x][conf[0] + 1] != '.' and self.board[x + 1][conf[0]] != '.' \
                         and self.board[x + 1][conf[0] + 1] != '.' \
-                        and self.board[x + 2][conf[0]] != '.':
+                        and self.board[x + 2][conf[0] + 1] != '.':
                     flag = False
             if flag:
                 height = x
@@ -66,20 +66,20 @@ class TPiece(Piece):
         if self.can_fall(height, conf[0]):
             if conf[2] == '0':
                 # change with color ID
-                new_board[height][conf[0] + 1] = '1'
-                new_board[height + 1][conf[0]] = '1'
-                new_board[height + 1][conf[0] + 1] = '1'
-                new_board[height + 1][conf[0] + 2] = '1'
-            elif conf[2] == '1':
                 new_board[height][conf[0]] = '1'
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height][conf[0] + 2] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
-            elif conf[2] == '2':
+            elif conf[2] == '1':
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height + 1][conf[0]] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
                 new_board[height + 2][conf[0] + 1] = '1'
+            elif conf[2] == '2':
+                new_board[height][conf[0] + 1] = '1'
+                new_board[height + 1][conf[0]] = '1'
+                new_board[height + 1][conf[0] + 1] = '1'
+                new_board[height + 1][conf[0] + 2] = '1'
             else:
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height + 1][conf[0]] = '1'
@@ -98,24 +98,32 @@ class TPiece(Piece):
         return True
 
     def generate_actions(self, column, conf):
+        if conf[2] == '0' or conf[2] == '2':
+            self.HEIGHT = 2
+            self.WIDTH = 3
+        else:
+            self.HEIGHT = 3
+            self.WIDTH = 2
         left = 5 - (self.WIDTH // 2)
         right = 5 + (self.WIDTH // 2)
         actions = []
         if not self.current_rotation == conf[2]:
             if conf[2] == '1':
-                actions.append(self.ROTATE_LEFT)
-                actions.append(self.ROTATE_LEFT)
-            elif conf[2] == '2':
                 actions.append(self.ROTATE_RIGHT)
+            elif conf[2] == '2':
+                actions.append(self.ROTATE_LEFT)
+                actions.append(self.ROTATE_LEFT)
             elif conf[2] == '3':
                 actions.append(self.ROTATE_LEFT)
 
         if column > right:
-            for i in range(right, column):
+            for i in range(right, column + self.WIDTH):
                 actions.append(self.RIGHT)
-        else:
-            diff = right - column
-            for i in range(0, diff):
+        elif column < left:
+            for i in range(0, left - column):
+                actions.append(self.LEFT)
+        elif column > left and column < right:
+            for i in range(left, left + (column - left)):
                 actions.append(self.LEFT)
 
         return actions

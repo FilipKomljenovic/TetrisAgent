@@ -16,7 +16,7 @@ class OPiece(Piece):
     def fill_configurations(self, board):
         configurations = []
         for x in range(0, self.BOARDWIDTH - 2):
-            configurations.append((x, x + self.WIDTH))
+            configurations.append((x, x + 1))
 
         return configurations
 
@@ -34,9 +34,9 @@ class OPiece(Piece):
                 break
 
         if self.can_fall(height, conf[0]):
-            maxHeight=height+self.HEIGHT
-            if maxHeight>self.BOARDHEIGHT:
-                maxHeight=self.BOARDHEIGHT
+            maxHeight = height + self.HEIGHT
+            if maxHeight > self.BOARDHEIGHT:
+                maxHeight = self.BOARDHEIGHT
             for x in range(height, maxHeight):
                 for y in range(conf[0], conf[1]):
                     # change with color ID
@@ -56,11 +56,13 @@ class OPiece(Piece):
         right = 5 + (self.WIDTH // 2)
         actions = []
         if column > right:
-            for i in range(right, column + 1):
+            for i in range(right, column + self.WIDTH):
                 actions.append(self.RIGHT)
-        else:
-            diff = right - column
-            for i in range(0, diff):
+        elif column < left:
+            for i in range(0, left - column):
+                actions.append(self.LEFT)
+        elif column > left and column < right:
+            for i in range(left, left + (column - left)):
                 actions.append(self.LEFT)
 
         return actions

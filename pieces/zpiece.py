@@ -14,10 +14,10 @@ class ZPiece(Piece):
         configurations = []
         for x in range(0, self.BOARDWIDTH - 3):
             # rotation 0 --> z
-            configurations.append((x, x + 3, '0'))
+            configurations.append((x, x + 2, '0'))
         for x in range(0, self.BOARDWIDTH - 2):
             # rotation 1 --> .-'
-            configurations.append((x, x + 2, '1'))
+            configurations.append((x, x + 1, '1'))
 
         return configurations
 
@@ -72,6 +72,12 @@ class ZPiece(Piece):
         return True
 
     def generate_actions(self, column, conf):
+        if conf[2] == '0':
+            self.HEIGHT = 2
+            self.WIDTH = 3
+        else:
+            self.HEIGHT = 3
+            self.WIDTH = 2
         left = 5 - (self.WIDTH // 2)
         right = 5 + (self.WIDTH // 2)
         actions = []
@@ -79,11 +85,13 @@ class ZPiece(Piece):
             actions.append(self.ROTATE_RIGHT)
 
         if column > right:
-            for i in range(right, column):
+            for i in range(right, column + self.WIDTH):
                 actions.append(self.RIGHT)
         elif column < left:
-            diff = left - column
-            for i in range(0, diff):
+            for i in range(0, left - column):
+                actions.append(self.LEFT)
+        elif column > left and column < right:
+            for i in range(left, left + (column - left)):
                 actions.append(self.LEFT)
 
         return actions
