@@ -2,10 +2,13 @@ class BoardStats:
     BOARDWIDTH = 10
     BOARDHEIGHT = 20
 
-    def __init__(self, board, new_board, piece_position):
+    def __init__(self, board, new_board=None, piece_position=None):
         self.board = board[::-1]
         self.features = []
-        self.new_board = new_board[::-1]
+        if new_board:
+            self.new_board = new_board[::-1]
+        else:
+            self.new_board = new_board
         # tuple with y0,x0,y1,x1 coordinates of piece
         self.piece_position = piece_position
 
@@ -23,12 +26,16 @@ class BoardStats:
 
         print(self.features)
 
+    def reset(self, new_board, piece_position):
+        self.new_board = new_board
+        self.piece_position = piece_position
+
     def set_board(self, board):
         self.board = self.new_board
         self.new_board = board[::-1]
 
     def holes(self):
-        print (self.board)
+        print(self.board)
         sum = 0
         rows = set()
         for y in range(0, self.BOARDWIDTH):
