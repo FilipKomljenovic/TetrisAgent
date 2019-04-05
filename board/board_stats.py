@@ -2,20 +2,18 @@ class BoardStats:
     BOARDWIDTH = 10
     BOARDHEIGHT = 20
 
-    def __init__(self, board, new_board=None, piece_position=None):
+    def __init__(self, board, old_board=None, piece_position=None):
         self.board = board[::-1]
         self.features = []
-        if new_board is not None:
-            self.new_board = new_board[::-1]
+        if old_board is not None:
+            self.old_board = old_board[::-1]
         else:
-            self.new_board = new_board
+            self.old_board = old_board
         # tuple with y0,x0,y1,x1 coordinates of piece
         self.piece_position = piece_position
 
     def calculate_features(self):
         self.features = []
-        self.features.append(self.landing_height())
-        self.features.append(self.eroded_piece_cells())
         self.features.append(self.row_transitions())
         self.features.append(self.column_transitions())
         holes_rows = self.holes()
@@ -26,8 +24,8 @@ class BoardStats:
 
         return self.features
 
-    def reset(self, new_board, piece_position):
-        self.new_board = new_board
+    def reset(self, board, piece_position):
+        self.board = board
         self.piece_position = piece_position
 
     def set_board(self, board):
@@ -109,13 +107,42 @@ class BoardStats:
         for i in range(self.piece_position[0], self.piece_position[2]):
             row_cleared = True
             for x in range(self.BOARDWIDTH):
-                if self.new_board[i][x] == '.':
+                if self.board[i][x] == '.':
                     row_cleared = False
                     break
             eliminated_rows += 1
             if row_cleared:
                 for x in range(self.BOARDWIDTH):
-                    if self.board[i][x] == '.' and self.new_board[i][x] != '.':
+                    if self.old_board[i][x] == '.' and self.board[i][x] != '.':
                         eliminated_piece_parts += 1
 
         return eliminated_rows * eliminated_piece_parts
+
+    def calculate_r(self):
+        self.features.append(self.landing_height())
+        self.features.append(self.eroded_piece_cells())
+        return self.clear_filled_rows()
+
+    def clear_filled_rows(self):
+        rows = []
+        for x in range(0, self.BOARDHEIGHT):
+            row_cleared = True
+            for y in range(0, self.BOARDWIDTH):
+                if self.board[x][y] == '.':
+                    row_cleared = False
+                    break
+            if row_cleared:
+                rows.append(x)
+
+        for row in rows:
+            for y in range(0, self.BOARDWIDTH):
+                self.board[row][y] = '.'
+
+        length = len(rows)
+        if length == 0:
+            return 0
+        for x in range(rows[0] + length, self.BOARDHEIGHT):
+            for y in range(0, self.BOARDWIDTH):
+                self.board[rows[0]][y] = self.board[x][y]
+                self.board[x][y] = '.'
+        return length

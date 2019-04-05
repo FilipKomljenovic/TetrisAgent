@@ -12,6 +12,7 @@ class Agent:
         self.configurations = []
         self.weights = [random.uniform(0, 1) for _ in range(8)]
         self.board_stats = BoardStats(board)
+        self.r = 0
 
     def print_state(self):
         print(self.board)
@@ -27,19 +28,16 @@ class Agent:
 
     def calculate_reward(self):
         rewards = []
-        print('duljina konfi je')
-        print(len(self.configurations))
         for conf in self.configurations:
-
             new_board = self.piece.generate_board(conf, self.board)
             piece_position = self.find_piece_position(self.board, new_board)
             self.board_stats.reset(new_board, piece_position)
             reward = 0
+            r = self.board_stats.calculate_r()
             features = self.board_stats.calculate_features()
-            print(features)
+
             for i in range(0, len(features)):
                 reward += self.weights[i] * features[i]
-
             rewards.append((reward, conf))
 
         rewards.sort(reverse=True)

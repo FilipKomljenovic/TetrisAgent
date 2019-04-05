@@ -9,6 +9,7 @@ class Piece:
     def __init__(self, shape, board):
         self.shape = shape
         self.board = board[::-1]
+        self.current_rotation = 0
 
     def fill_configurations(self, board):
         pass

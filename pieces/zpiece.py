@@ -9,16 +9,15 @@ class ZPiece(Piece):
 
     def __init__(self, shape, board):
         super().__init__(shape, board)
-        self.current_rotation = 0
 
     def fill_configurations(self, board):
         configurations = []
-        for x in range(0, self.BOARDWIDTH - 4):
-            # rotation 0 --> z
-            configurations.append((x, x + 3, 'r0'))
         for x in range(0, self.BOARDWIDTH - 3):
+            # rotation 0 --> z
+            configurations.append((x, x + 3, '0'))
+        for x in range(0, self.BOARDWIDTH - 2):
             # rotation 1 --> .-'
-            configurations.append((x, x + 2, 'r1'))
+            configurations.append((x, x + 2, '1'))
 
         return configurations
 
@@ -26,20 +25,20 @@ class ZPiece(Piece):
         new_board = copy.deepcopy(board)
         new_board = new_board[::-1]
         height = 0
-        if conf[2] == 'r0':
+        if conf[2] == '0':
             self.HEIGHT = 2
             self.WIDTH = 3
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
 
-        for x in range(0, self.BOARDHEIGHT - 1):
+        for x in range(0, self.BOARDHEIGHT):
             flag = True
-            if conf[2] == 'r0':
+            if conf[2] == '0':
                 if self.board[x + 1][conf[0]] != '.' and self.board[x + 1][conf[0] + 1] != '.' \
                         and self.board[x][conf[0] + 1] != '.' and self.board[x][conf[0] + 2] != '.':
                     flag = False
-            elif conf[2] == 'r1':
+            elif conf[2] == '1':
                 if self.board[x][conf[0]] != '.' and self.board[x + 1][conf[0]] != '.' \
                         and self.board[x + 1][conf[0] + 1] != '.' \
                         and self.board[x + 2][conf[0] + 1] != '.':
@@ -49,13 +48,13 @@ class ZPiece(Piece):
                 break
 
         if self.can_fall(height, conf[0]):
-            if conf[2] == 'r0':
+            if conf[2] == '0':
                 # change with color ID
                 new_board[height + 1][conf[0]] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height][conf[0] + 2] = '1'
-            elif conf[2] == 'r1':
+            elif conf[2] == '1':
                 new_board[height][conf[0]] = '1'
                 new_board[height + 1][conf[0]] = '1'
                 new_board[height + 2][conf[0] + 1] = '1'
@@ -66,7 +65,7 @@ class ZPiece(Piece):
         return new_board
 
     def can_fall(self, height, column):
-        for x in range(height, self.BOARDHEIGHT - 1):
+        for x in range(height, self.BOARDHEIGHT):
             for y in range(column, column + self.WIDTH):
                 if self.board[x][y] != '.':
                     return False
