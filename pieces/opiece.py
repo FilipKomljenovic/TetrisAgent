@@ -17,7 +17,7 @@ class OPiece(Piece):
         configurations = []
         for x in range(0, self.BOARDWIDTH - 2):
             configurations.append((x, x + self.WIDTH))
-        print(configurations)
+
         return configurations
 
     def generate_board(self, conf, board):
@@ -38,8 +38,7 @@ class OPiece(Piece):
                 for y in range(conf[0], conf[1]):
                     # change with color ID
                     new_board[x][y] = '1'
-        print(board)
-        print(new_board)
+
         return new_board
 
     def can_fall(self, height, column):
@@ -49,7 +48,7 @@ class OPiece(Piece):
                     return False
         return True
 
-    def generate_actions(self, column):
+    def generate_actions(self, column, conf):
         left = 5 - (self.WIDTH // 2)
         right = 5 + (self.WIDTH // 2)
         actions = []
@@ -60,5 +59,5 @@ class OPiece(Piece):
             diff = left - column
             for i in range(0, diff):
                 actions.append(self.LEFT)
-        print(actions)
+
         return actions

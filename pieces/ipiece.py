@@ -19,13 +19,13 @@ class IPiece(Piece):
         # rotation 1 --> ----
         for x in range(0, self.BOARDWIDTH - 5):
             configurations.append((x, x + 4, 'r1'))
-        print(configurations)
         return configurations
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
+        new_board = new_board[::-1]
         height = 0
-        if not conf[3] == 'r0':
+        if not conf[2] == 'r0':
             self.HEIGHT = 1
             self.WIDTH = 4
         else:
@@ -56,12 +56,13 @@ class IPiece(Piece):
             for y in range(column, column + self.WIDTH):
                 if self.board[x][y] != '.':
                     return False
+        return True
 
     def generate_actions(self, column, conf):
         left = 5 - (self.WIDTH // 2)
         right = 5 + (self.WIDTH // 2)
         actions = []
-        if not self.current_rotation == conf[3]:
+        if not self.current_rotation == conf[2]:
             actions.append(self.ROTATE_LEFT)
         if column > right:
             for i in range(right, column):
@@ -70,7 +71,6 @@ class IPiece(Piece):
             diff = left - column
             for i in range(0, diff):
                 actions.append(self.LEFT)
-        print(actions)
         return actions
 
     def set_rotation(self, rotation):

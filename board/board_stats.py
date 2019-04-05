@@ -5,7 +5,7 @@ class BoardStats:
     def __init__(self, board, new_board=None, piece_position=None):
         self.board = board[::-1]
         self.features = []
-        if new_board:
+        if new_board is not None:
             self.new_board = new_board[::-1]
         else:
             self.new_board = new_board
@@ -24,31 +24,28 @@ class BoardStats:
         self.features.append(self.hole_depth())
         self.features.append(holes_rows[1])
 
-        print(self.features)
+        return self.features
 
     def reset(self, new_board, piece_position):
         self.new_board = new_board
         self.piece_position = piece_position
 
     def set_board(self, board):
-        self.board = self.new_board
-        self.new_board = board[::-1]
+        self.board = board[::-1]
 
     def holes(self):
-        print(self.board)
         sum = 0
         rows = set()
         for y in range(0, self.BOARDWIDTH):
             for x in range(0, self.BOARDHEIGHT - 1):
                 if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
-                    print(self.board[x])
                     sum += 1
             for x in range(0, self.BOARDHEIGHT):
                 if self.board[x][y] == '.':
                     rows.add(x)
         return sum, len(rows)
 
-    def heighest_position(self, y):
+    def highest_position(self, y):
         for x in range(self.BOARDHEIGHT - 1, 0, -1):
             if self.board[x][y] != '.':
                 return x
@@ -57,7 +54,7 @@ class BoardStats:
     def hole_depth(self):
         sum = 0
         for y in range(0, self.BOARDWIDTH):
-            highest = self.heighest_position(y)
+            highest = self.highest_position(y)
             for x in range(0, highest):
                 if self.board[x][y] == '.':
                     for z in range(x, highest):
@@ -71,7 +68,6 @@ class BoardStats:
             for y in range(1, self.BOARDWIDTH - 2):
                 if self.board[x][y] == '.' and self.board[x + 1][y - 1] != '.' and self.board[x + 1][y + 1] != '.':
                     sum += self.found_well(x, y)
-                    print(sum)
         return sum
 
     def row_transitions(self):
@@ -111,12 +107,15 @@ class BoardStats:
         eliminated_rows = 0
         eliminated_piece_parts = 0
         for i in range(self.piece_position[0], self.piece_position[2]):
+            row_cleared = True
             for x in range(self.BOARDWIDTH):
-                if self.board[i][x] == '.':
+                if self.new_board[i][x] == '.':
+                    row_cleared = False
                     break
             eliminated_rows += 1
-            for x in range(self.BOARDWIDTH):
-                if self.board[i][x] == '.' and self.new_board[i][x] != '.':
-                    eliminated_piece_parts += 1
+            if row_cleared:
+                for x in range(self.BOARDWIDTH):
+                    if self.board[i][x] == '.' and self.new_board[i][x] != '.':
+                        eliminated_piece_parts += 1
 
         return eliminated_rows * eliminated_piece_parts

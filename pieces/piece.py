@@ -16,3 +16,9 @@ class Piece:
     # conf contains x0, x1 coordinates and rotation
     def generate_board(self, conf, board):
         pass
+
+    def generate_actions(self, column, conf):
+        pass
+
+    def set_board(self, board):
+        self.board = board[::-1]
