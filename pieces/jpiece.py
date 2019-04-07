@@ -6,26 +6,35 @@ class JPiece(Piece):
     rotations = [0, 1, 2, 3]
     HEIGHT = 3
     WIDTH = 2
+    rotations_0 = {'0': None, '1': (Piece.ROTATE_RIGHT,), '2': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT),
+                   '3': (Piece.ROTATE_LEFT,)}
+    rotations_1 = {'0': (Piece.ROTATE_LEFT,), '1': None, '2': (Piece.ROTATE_RIGHT,),
+                   '3': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT)}
+    rotations_2 = {'0': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT), '1': (Piece.ROTATE_LEFT,), '2': None,
+                   '3': (Piece.ROTATE_RIGHT,)}
+    rotations_3 = {'0': (Piece.ROTATE_RIGHT,), '1': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT), '2': (Piece.ROTATE_LEFT,),
+                   '3': None}
 
     def __init__(self, shape, board):
         super().__init__(shape, board)
 
     def fill_configurations(self, board):
-        configurations = []
+        if not len(self.configurations) == 0:
+            return self.configurations
         for x in range(0, self.BOARDWIDTH - 2):
             # rotation 0 --> i _ _
-            configurations.append((x, x + 1, '0'))
-        for x in range(0, self.BOARDWIDTH - 3):
+            self.configurations.append((x, x + 2, '0'))
+        for x in range(0, self.BOARDWIDTH - 1):
             # rotation 1 -->  |'
-            configurations.append((x, x + 2, '1'))
+            self.configurations.append((x, x + 1, '1'))
         for x in range(0, self.BOARDWIDTH - 2):
             # rotation 2 -->  ''i
-            configurations.append((x, x + 1, '2'))
-        for x in range(0, self.BOARDWIDTH - 3):
+            self.configurations.append((x, x + 2, '2'))
+        for x in range(0, self.BOARDWIDTH - 1):
             # rotation 3 --> J
-            configurations.append((x, x + 2, '3'))
+            self.configurations.append((x, x + 1, '3'))
 
-        return configurations
+        return self.configurations
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
@@ -41,22 +50,25 @@ class JPiece(Piece):
         for x in range(0, self.BOARDHEIGHT):
             flag = True
             if conf[2] == '0':
-                if self.board[x][conf[0]] != '.' and self.board[x + 1][conf[0]] != '.' \
+                if x + 1 < self.BOARDHEIGHT and conf[0] + 2 < self.BOARDWIDTH and self.board[x][conf[0]] != '.' and \
+                        self.board[x + 1][conf[0]] != '.' \
                         and self.board[x][conf[0] + 2] != '.' \
                         and self.board[x][conf[0] + 1] != '.':
                     flag = False
             elif conf[2] == '1':
-                if self.board[x][conf[0]] != '.' and self.board[x + 1][conf[0]] != '.' \
+                if x + 2 < self.BOARDHEIGHT and conf[0] + 1 < self.BOARDWIDTH and self.board[x][conf[0]] != '.' and \
+                        self.board[x + 1][conf[0]] != '.' \
                         and self.board[x + 2][conf[0]] != '.' \
                         and self.board[x + 2][conf[0] + 1] != '.':
                     flag = False
             elif conf[2] == '2':
-                if self.board[x][conf[0] + 2] != '.' and self.board[x + 1][conf[0]] != '.' \
-                        and self.board[x + 1][conf[0] + 1] != '.' \
+                if x + 1 < self.BOARDHEIGHT and conf[0] + 2 < self.BOARDWIDTH and self.board[x][conf[0] + 2] != '.' and \
+                        self.board[x + 1][conf[0]] != '.' and self.board[x + 1][conf[0] + 1] != '.' \
                         and self.board[x + 1][conf[0] + 2] != '.':
                     flag = False
             elif conf[2] == '3':
-                if self.board[x][conf[0]] != '.' and self.board[x][conf[0] + 1] != '.' \
+                if x + 2 < self.BOARDHEIGHT and conf[0] + 1 < self.BOARDWIDTH and self.board[x][conf[0]] != '.' and \
+                        self.board[x][conf[0] + 1] != '.' \
                         and self.board[x + 1][conf[0] + 1] != '.' and self.board[x + 2][conf[0] + 1] != '.':
                     flag = False
             if flag:
@@ -104,24 +116,30 @@ class JPiece(Piece):
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
-        left = 5 - (self.WIDTH // 2)
-        right = 5 + (self.WIDTH // 2)
+        left = 4 if self.WIDTH == 3 or conf[2] == '3' else 5
+        right = 5 if conf[2] == '3' else 6
         actions = []
-        if not self.current_rotation == conf[2]:
-            if conf[2] == '1':
-                actions.append(self.ROTATE_RIGHT)
-            elif conf[2] == '2':
-                actions.append(self.ROTATE_RIGHT)
-                actions.append(self.ROTATE_RIGHT)
-            elif conf[2] == '3':
-                actions.append(self.ROTATE_LEFT)
+        if not self.current_rotation == int(conf[2]):
+            if self.current_rotation == 0:
+                for i in range(0, len(self.rotations_0.get(conf[2]))):
+                    actions.append(self.rotations_0.get(conf[2])[i])
+            elif self.current_rotation == 1:
+                for i in range(0, len(self.rotations_1.get(conf[2]))):
+                    actions.append(self.rotations_1.get(conf[2])[i])
+            elif self.current_rotation == 2:
+                for i in range(0, len(self.rotations_2.get(conf[2]))):
+                    actions.append(self.rotations_2.get(conf[2])[i])
+            elif self.current_rotation == 3:
+                for i in range(0, len(self.rotations_3.get(conf[2]))):
+                    actions.append(self.rotations_3.get(conf[2])[i])
+
         if column > right:
-            for i in range(right, column + self.WIDTH):
+            for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column < right:
+        elif column > left and column <= right:
             for i in range(left, left + (column - left)):
-                actions.append(self.LEFT)
+                actions.append(self.RIGHT)
         return actions

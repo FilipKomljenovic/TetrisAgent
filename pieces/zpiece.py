@@ -11,15 +11,16 @@ class ZPiece(Piece):
         super().__init__(shape, board)
 
     def fill_configurations(self, board):
-        configurations = []
-        for x in range(0, self.BOARDWIDTH - 3):
-            # rotation 0 --> z
-            configurations.append((x, x + 2, '0'))
+        if not len(self.configurations) == 0:
+            return self.configurations
         for x in range(0, self.BOARDWIDTH - 2):
+            # rotation 0 --> z
+            self.configurations.append((x, x + 2, '0'))
+        for x in range(0, self.BOARDWIDTH - 1):
             # rotation 1 --> .-'
-            configurations.append((x, x + 1, '1'))
+            self.configurations.append((x, x + 1, '1'))
 
-        return configurations
+        return self.configurations
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
@@ -78,20 +79,20 @@ class ZPiece(Piece):
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
-        left = 5 - (self.WIDTH // 2)
-        right = 5 + (self.WIDTH // 2)
+        left = 4
+        right = 5 if self.WIDTH == 2 else 6
         actions = []
-        if not self.current_rotation == conf[2]:
-            actions.append(self.ROTATE_RIGHT)
+        if not self.current_rotation == int(conf[2]):
+            actions.append(self.ROTATE_LEFT)
 
         if column > right:
-            for i in range(right, column + self.WIDTH):
+            for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column < right:
+        elif column > left and column <= right:
             for i in range(left, left + (column - left)):
-                actions.append(self.LEFT)
+                actions.append(self.RIGHT)
 
         return actions

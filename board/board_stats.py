@@ -1,9 +1,12 @@
+import copy
+
+
 class BoardStats:
     BOARDWIDTH = 10
     BOARDHEIGHT = 20
 
     def __init__(self, board, old_board=None, piece_position=None):
-        self.board = board[::-1]
+        self.board = copy.deepcopy(board)[::-1]
         self.features = []
         if old_board is not None:
             self.old_board = old_board[::-1]
@@ -13,7 +16,6 @@ class BoardStats:
         self.piece_position = piece_position
 
     def calculate_features(self):
-        self.features = []
         self.features.append(self.row_transitions())
         self.features.append(self.column_transitions())
         holes_rows = self.holes()
@@ -25,7 +27,7 @@ class BoardStats:
         return self.features
 
     def reset(self, board, piece_position):
-        self.board = board
+        self.board = copy.deepcopy(board)
         self.piece_position = piece_position
 
     def set_board(self, board):
@@ -35,12 +37,13 @@ class BoardStats:
         sum = 0
         rows = set()
         for y in range(0, self.BOARDWIDTH):
+            flag = False
             for x in range(0, self.BOARDHEIGHT - 1):
                 if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
                     sum += 1
-            for x in range(0, self.BOARDHEIGHT):
-                if self.board[x][y] == '.':
-                    rows.add(x)
+                    flag=True
+            if flag:
+                rows.add(x)
         return sum, len(rows)
 
     def highest_position(self, y):
@@ -122,6 +125,7 @@ class BoardStats:
         return eliminated_rows * eliminated_piece_parts
 
     def calculate_r(self):
+        self.features = []
         self.features.append(self.landing_height())
         self.features.append(self.eroded_piece_cells())
         return self.clear_filled_rows()

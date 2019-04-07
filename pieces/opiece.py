@@ -14,11 +14,12 @@ class OPiece(Piece):
         super().__init__(shape, board)
 
     def fill_configurations(self, board):
-        configurations = []
-        for x in range(0, self.BOARDWIDTH - 2):
-            configurations.append((x, x + 1))
+        if not len(self.configurations) == 0:
+            return self.configurations
+        for x in range(0, self.BOARDWIDTH - 1):
+            self.configurations.append((x, x + 1))
 
-        return configurations
+        return self.configurations
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
@@ -26,19 +27,19 @@ class OPiece(Piece):
         height = 0
         for x in range(0, self.BOARDHEIGHT):
             flag = True
-            for i in range(conf[0], conf[1]):
-                if self.board[x][i] != '.':
+            for i in range(conf[0], conf[1] + 1):
+                if conf[1] + 1 < self.BOARDWIDTH and self.board[x][i] != '.':
                     flag = False
             if flag:
                 height = x
                 break
 
         if self.can_fall(height, conf[0]):
-            maxHeight = height + self.HEIGHT
-            if maxHeight > self.BOARDHEIGHT:
-                maxHeight = self.BOARDHEIGHT
-            for x in range(height, maxHeight):
-                for y in range(conf[0], conf[1]):
+            max_height = height + self.HEIGHT
+            if max_height > self.BOARDHEIGHT:
+                max_height = self.BOARDHEIGHT
+            for x in range(height, max_height):
+                for y in range(conf[0], conf[1] + 1):
                     # change with color ID
                     new_board[x][y] = '1'
 
@@ -52,17 +53,17 @@ class OPiece(Piece):
         return True
 
     def generate_actions(self, column, conf):
-        left = 5 - (self.WIDTH // 2)
-        right = 5 + (self.WIDTH // 2)
+        left = 4
+        right = 5
         actions = []
         if column > right:
-            for i in range(right, column + self.WIDTH):
+            for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column < right:
+        elif column > left and column <= right:
             for i in range(left, left + (column - left)):
-                actions.append(self.LEFT)
+                actions.append(self.RIGHT)
 
         return actions
