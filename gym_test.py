@@ -1,9 +1,7 @@
-import time
 import timeit
 
 import gym_tetris
 from agent import Agent
-from gym_tetris._tetris_helpers import new_piece
 from pieces.ipiece import IPiece
 from pieces.jpiece import JPiece
 from pieces.lpiece import LPiece
@@ -11,7 +9,6 @@ from pieces.opiece import OPiece
 from pieces.spiece import SPiece
 from pieces.tpiece import TPiece
 from pieces.zpiece import ZPiece
-import copy
 
 env = gym_tetris.make("Tetris-v0")
 env.reset()
@@ -47,7 +44,7 @@ for i in range(10):
         step += 1
         actions = agent.make_decision()
         if len(actions) == 0:
-            state, reward, done, info = env.env.game.step(3)
+            state, reward, done, info = env.env.game.step(0)
         for action in actions:
             state, reward, done, info = env.env.game.step(action)
             env.render('human')
