@@ -38,7 +38,6 @@ class LPiece(Piece):
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
-        new_board = new_board[::-1]
         height = 0
         if conf[2] == '0' or conf[2] == '2':
             self.HEIGHT = 2
@@ -48,36 +47,12 @@ class LPiece(Piece):
             self.WIDTH = 2
 
         for x in range(0, self.BOARDHEIGHT):
-            # change
-            flag = True
-            if conf[2] == '0':
-                if x + 1 < self.BOARDHEIGHT and conf[0] + 2 < self.BOARDWIDTH and \
-                    self.board[x][conf[0]] != '.' and self.board[x][conf[0] + 1] != '.' \
-                        and self.board[x][conf[0] + 2] != '.' \
-                        and self.board[x + 1][conf[0] + 2] != '.':
-                    flag = False
-            elif conf[2] == '1':
-                if x + 2 < self.BOARDHEIGHT and conf[0] + 1 < self.BOARDWIDTH and \
-                        self.board[x][conf[0]] != '.' and self.board[x][conf[0] + 1] != '.' \
-                        and self.board[x + 1][conf[0]] != '.' and self.board[x + 2][conf[0]] != '.':
-                    flag = False
-            elif conf[2] == '2':
-                if x + 1 < self.BOARDHEIGHT and conf[0] + 2 < self.BOARDWIDTH and \
-                        self.board[x][conf[0]] != '.' and self.board[x + 1][conf[0] + 1] != '.' \
-                        and self.board[x + 1][conf[0] + 2] != '.' \
-                        and self.board[x + 1][conf[0] + 1] != '.':
-                    flag = False
-            elif conf[2] == '3':
-                if x + 2 < self.BOARDHEIGHT and conf[0] + 1 < self.BOARDWIDTH and \
-                        self.board[x][conf[0] + 1] != '.' and self.board[x + 1][conf[0] + 1] != '.' \
-                        and self.board[x + 2][conf[0]] != '.' \
-                        and self.board[x + 2][conf[0] + 1] != '.':
-                    flag = False
+            flag = self.check_conf(x, conf[0], conf[2])
             if flag:
                 height = x
                 break
 
-        if self.can_fall(height, conf[0]):
+        if self.can_fall(height, conf[0], conf[2]):
             if conf[2] == '0':
                 # change with color ID
                 new_board[height][conf[0]] = '1'
@@ -104,12 +79,37 @@ class LPiece(Piece):
             pass
         return new_board
 
-    def can_fall(self, height, column):
-        for x in range(height, self.BOARDHEIGHT):
-            for y in range(column, column + self.WIDTH):
-                if self.board[x][y] != '.':
-                    return False
+    def can_fall(self, height, column, rot):
+        for x in range(height, self.BOARDHEIGHT-2):
+            if not self.check_conf(x, column, rot):
+                return False
         return True
+
+    def check_conf(self, x, conf, rot):
+        if rot == '0':
+            if x + 1 < self.BOARDHEIGHT and conf + 2 < self.BOARDWIDTH and \
+                    self.board[x][conf] == '.' and self.board[x][conf + 1] == '.' \
+                    and self.board[x][conf + 2] == '.' \
+                    and self.board[x + 1][conf + 2] == '.':
+                return True
+        elif rot == '1':
+            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and \
+                    self.board[x][conf] == '.' and self.board[x][conf + 1] == '.' \
+                    and self.board[x + 1][conf] == '.' and self.board[x + 2][conf] == '.':
+                return True
+        elif rot == '2':
+            if x + 1 < self.BOARDHEIGHT and conf + 2 < self.BOARDWIDTH and \
+                    self.board[x][conf] == '.' and self.board[x + 1][conf + 1] == '.' \
+                    and self.board[x + 1][conf + 2] == '.' \
+                    and self.board[x + 1][conf + 1] == '.':
+                return True
+        elif rot == '3':
+            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and \
+                    self.board[x][conf + 1] == '.' and self.board[x + 1][conf + 1] == '.' \
+                    and self.board[x + 2][conf] == '.' \
+                    and self.board[x + 2][conf + 1] == '.':
+                return True
+        return False
 
     def generate_actions(self, column, conf):
         if conf[2] == '0' or conf[2] == '2':
@@ -136,7 +136,7 @@ class LPiece(Piece):
                     actions.append(self.rotations_3.get(conf[2])[i])
 
         if column > right:
-            for i in range(right, column + self.WIDTH-1):
+            for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):

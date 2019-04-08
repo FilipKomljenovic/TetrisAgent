@@ -18,11 +18,10 @@ class BoardStats:
     def calculate_features(self):
         self.features.append(self.row_transitions())
         self.features.append(self.column_transitions())
-        holes_rows = self.holes()
-        self.features.append(holes_rows[0])
+        self.features.append(self.holes())
         self.features.append(self.board_wells())
         self.features.append(self.hole_depth())
-        self.features.append(holes_rows[1])
+        self.features.append(self.rows_with_holes())
 
         return self.features
 
@@ -35,16 +34,20 @@ class BoardStats:
 
     def holes(self):
         sum = 0
-        rows = set()
-        for y in range(0, self.BOARDWIDTH):
-            flag = False
-            for x in range(0, self.BOARDHEIGHT - 1):
+        for x in range(0, self.BOARDHEIGHT - 1):
+            for y in range(0, self.BOARDWIDTH):
                 if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
                     sum += 1
-                    flag=True
-            if flag:
-                rows.add(x)
-        return sum, len(rows)
+                    break
+        return sum
+
+    def rows_with_holes(self):
+        sum = 0
+        for x in range(0, self.BOARDHEIGHT - 1):
+            for y in range(0, self.BOARDWIDTH):
+                if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
+                    sum += 1
+        return sum
 
     def highest_position(self, y):
         for x in range(self.BOARDHEIGHT - 1, 0, -1):
@@ -98,14 +101,16 @@ class BoardStats:
         for i in range(x + 1, self.BOARDHEIGHT):
             if self.board[i][y - 1] != '.' and self.board[i][y + 1] != '.':
                 depth += 1
+            else:
+                break
 
         return sum(range(1, depth + 1))
 
     def landing_height(self):
         if self.piece_position[0] > self.piece_position[2]:
-            return self.piece_position[0]
+            return self.piece_position[0] + 1
         else:
-            return self.piece_position[2]
+            return self.piece_position[2] + 1
 
     def eroded_piece_cells(self):
         eliminated_rows = 0
@@ -116,8 +121,8 @@ class BoardStats:
                 if self.board[i][x] == '.':
                     row_cleared = False
                     break
-            eliminated_rows += 1
             if row_cleared:
+                eliminated_rows += 1
                 for x in range(self.BOARDWIDTH):
                     if self.old_board[i][x] == '.' and self.board[i][x] != '.':
                         eliminated_piece_parts += 1

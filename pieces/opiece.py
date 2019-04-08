@@ -23,7 +23,6 @@ class OPiece(Piece):
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
-        new_board = new_board[::-1]
         height = 0
         for x in range(0, self.BOARDHEIGHT):
             flag = True

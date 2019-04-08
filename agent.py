@@ -10,7 +10,7 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights = [random.uniform(-1, 1) for _ in range(8)]
+        self.weights = [random.uniform(0, 1) for _ in range(8)]
         self.board_stats = BoardStats(board)
         self.r = 0
 

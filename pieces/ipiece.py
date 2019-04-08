@@ -23,7 +23,6 @@ class IPiece(Piece):
 
     def generate_board(self, conf, board):
         new_board = copy.deepcopy(board)
-        new_board = new_board[::-1]
         height = 0
         if not conf[2] == '0':
             self.HEIGHT = 1
@@ -35,7 +34,7 @@ class IPiece(Piece):
         for x in range(0, self.BOARDHEIGHT - 1):
             flag = True
             for i in range(conf[0], conf[1] + 1):
-                if conf[1] + 1 < self.BOARDWIDTH and self.board[x][i] != '.':
+                if conf[1] < self.BOARDWIDTH and self.board[x][i] != '.':
                     flag = False
             if flag:
                 height = x
