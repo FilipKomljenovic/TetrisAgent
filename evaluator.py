@@ -12,8 +12,16 @@ from pieces.zpiece import ZPiece
 
 
 class Evaluator:
-    def __init__(self, id):
+    def __init__(self, id, agent=None):
+        self.agent = agent
         self.id = id
+        self.games_num = 1
+
+    def set_agent(self, agent):
+        self.agent = agent
+
+    def set_games_num(self, n):
+        self.games_num = n
 
     def evaluate(self):
         env = gym_tetris.make("Tetris-v0")
@@ -26,11 +34,10 @@ class Evaluator:
         zpiece = ZPiece("Z", env.env.game.board)
         tpiece = TPiece("T", env.env.game.board)
         pieces = {"O": opiece, "I": ipiece, "J": jpiece, "L": lpiece, "S": spiece, "Z": zpiece, "T": tpiece}
-
+        self.agent = Agent()
         start = timeit.default_timer()
         step = 0
-        for i in range(1):
-            agent = Agent(env.env.game.board)
+        for i in range(self.games_num):
             env.reset()
             next_piece = env.env.game.falling_piece
             done = False
@@ -38,12 +45,12 @@ class Evaluator:
                 board = env.env.game.board
                 for piece in pieces.values():
                     piece.set_board(board)
-                agent.set_board(board)
+                self.agent.set_board(board)
                 piece = pieces[next_piece['shape']]
                 piece.current_rotation = next_piece['rotation']
-                agent.set_piece(piece)
+                self.agent.set_piece(piece)
                 step += 1
-                actions = agent.make_decision()
+                actions = self.agent.make_decision()
                 if len(actions) == 0:
                     state, reward, done, info = env.env.game.step(0)
                 for action in actions:
@@ -54,9 +61,9 @@ class Evaluator:
                     state, reward, done, info = env.env.game.step(0)
 
                 next_piece = env.env.game.next_piece
-            print(step)
-            print(agent.r)
+            print("steps:", step)
+            print("r:", self.agent.r)
         print("id:", self.id)
         stop = timeit.default_timer()
         print('Time: ', stop - start)
-        return agent.r, agent.weights
+        return self.agent.r, self.agent.weights

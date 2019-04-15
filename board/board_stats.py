@@ -26,6 +26,7 @@ class BoardStats:
         return self.features
 
     def reset(self, board, piece_position):
+        self.old_board=board
         self.board = copy.deepcopy(board)
         self.piece_position = piece_position
 
