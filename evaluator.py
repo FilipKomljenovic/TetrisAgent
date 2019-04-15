@@ -63,6 +63,7 @@ class Evaluator:
                 next_piece = env.env.game.next_piece
             print("steps:", step)
             print("r:", self.agent.r)
+        env.env.close()
         print("id:", self.id)
         stop = timeit.default_timer()
         print('Time: ', stop - start)
