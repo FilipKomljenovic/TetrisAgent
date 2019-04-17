@@ -1,9 +1,8 @@
 import datetime
-from itertools import chain
-import numpy as np
-import random as rand
 import multiprocessing as mp
-from joblib import Parallel, delayed
+from itertools import chain
+
+import numpy as np
 
 from agent import Agent
 from evaluator import Evaluator
@@ -33,6 +32,7 @@ class Algorithm:
         self.agents = [Agent() for i in range(0, n)]
         self.ids = [i for i in range(0, N_JOBS)]
         self.file = file
+        self.curr_best = None
 
     def run(self):
         curr_best_ag = (0, 0)
@@ -40,14 +40,13 @@ class Algorithm:
 
         while curr_best_ag[0] < 1000:
             for i in range(0, self.N):
-                self.agents[i].weights = self.sigma * np.random.randn(1, 8) * self.mu
+                self.agents[i].weights = np.diag(self.sigma * np.random.randn(1, 8) + self.mu).tolist()
 
-            self.reset()
             temp_results = []
 
             pool = mp.Pool(N_JOBS)
             for i in range(0, self.N, N_JOBS):
-                ids = [j for j in range(0, self.N)]
+                ids = [j for j in range(i, N_JOBS + i)]
                 result = [pool.apply_async(work, args=(id, self.agents, Algorithm.l)) for id in ids]
                 output = [p.get() for p in result]
                 temp_results.append(output)
@@ -64,42 +63,51 @@ class Algorithm:
             results.sort(reverse=True)
             best_agents = self.rho * self.N
             elite = []
-            sum = dict.fromkeys([i for i in range(0, self.WEIGHTS_NUM)], 0)
+            # sum = dict.fromkeys([i for i in range(0, self.WEIGHTS_NUM)], 0)
 
             for i in range(0, int(best_agents)):
                 elite.append((results[i]))
 
-            for el in elite:
-                for col in range(0, self.WEIGHTS_NUM):
-                    sum[col] += el[1][col]
+            # for el in elite:
+            #     for col in range(0, self.WEIGHTS_NUM):
+            #         sum[col] += el[1][col]
 
-            for i in range(0, self.WEIGHTS_NUM):
-                self.mu[i] = (sum[i] / self.WEIGHTS_NUM)
+            # for i in range(0, self.WEIGHTS_NUM):
+            # self.mu[i] = (sum[i] / self.WEIGHTS_NUM)
 
-            self.sigma = np.cov(self.mu)
-            curr_best_ag = elite[0]
+            elite_matrix = np.zeros((int(best_agents), self.WEIGHTS_NUM))
+            for i in range(0, len(elite)):
+                elite_matrix[i] = elite[i][1]
+
+            elite_matrix = elite_matrix.transpose()
+            self.mu = np.mean(elite_matrix, 1)
+
+            self.sigma = np.diag(np.diag(np.cov(elite_matrix) + self.zt))
+            if self.curr_best is None or self.curr_best[0] < elite[0][0]:
+                self.curr_best = elite[0]
             step += 1
 
             if step % 2 == 0:
-                self.file.write(str(curr_best_ag))
+                self.file.write(''.join(map(str, self.curr_best)))
                 self.file.write("\n")
                 self.file.write(str(datetime.datetime.now()))
+                self.file.write("\n")
+                self.file.flush()
+
+        self.file.close()
 
     def get_agents(self):
         return self.agents
 
-    def reset(self):
-        self.mu = [0 for i in range(0, weights_num)]
-
 
 weights_num = 8
-rho = 0.1
+rho = 0.2
 mu = [0 for i in range(0, weights_num)]
 sigma = np.diag([100 for i in range(0, weights_num)])
 l = 1
 zt = 4
-n = 16
-f = open("weights.txt", "w+")
+n = 104
+f = open("weights.txt", "w")
 
 algorithm = Algorithm(mu, sigma, n, rho, zt, f)
 algorithm.run()
