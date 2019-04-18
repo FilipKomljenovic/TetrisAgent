@@ -25,10 +25,11 @@ class OPiece(Piece):
         new_board = copy.deepcopy(board)
         height = 0
         for x in range(0, self.BOARDHEIGHT):
-            flag = True
+            flag = False
             for i in range(conf[0], conf[1] + 1):
-                if conf[1] + 1 < self.BOARDWIDTH and self.board[x][i] != '.':
-                    flag = False
+                if conf[1] + 1 < self.BOARDWIDTH and self.board[x][i] == '.':
+                    if self.can_fall(x, conf[0]):
+                        flag = True
             if flag:
                 height = x
                 break

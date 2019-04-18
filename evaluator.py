@@ -1,7 +1,6 @@
 import timeit
 
 import gym_tetris
-from agent import Agent
 from pieces.ipiece import IPiece
 from pieces.jpiece import JPiece
 from pieces.lpiece import LPiece

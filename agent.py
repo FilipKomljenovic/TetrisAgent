@@ -10,7 +10,7 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights = []
+        self.weights = [i for i in range(0, 8)]
         self.board_stats = BoardStats(board)
         self.r = 0
 
@@ -34,7 +34,7 @@ class Agent:
             reward = 0
             self.board_stats.piece_position = piece_position
 
-            self.board_stats.reset(new_board, piece_position)
+            self.board_stats.reset(self.board, new_board, piece_position)
             r = self.board_stats.calculate_r()
             features = self.board_stats.calculate_features()
             self.board_stats.set_board(self.board)
