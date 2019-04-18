@@ -49,7 +49,7 @@ class TPiece(Piece):
 
         for x in range(0, self.BOARDHEIGHT):
             flag = self.check_conf(x, conf[0], conf[2])
-            if flag:
+            if flag and self.can_fall(x, conf[0], conf[2]):
                 height = x
                 break
 

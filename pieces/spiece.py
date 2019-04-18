@@ -34,7 +34,7 @@ class SPiece(Piece):
 
         for x in range(0, self.BOARDHEIGHT):
             flag = self.check_conf(x, conf[0], conf[2])
-            if flag:
+            if flag and self.can_fall(x, conf[0], conf[2]):
                 height = x
                 break
 
@@ -56,7 +56,7 @@ class SPiece(Piece):
         return new_board
 
     def can_fall(self, height, column, rot):
-        for x in range(height, self.BOARDHEIGHT-2):
+        for x in range(height, self.BOARDHEIGHT - 2):
             if not self.check_conf(x, column, rot):
                 return False
         return True

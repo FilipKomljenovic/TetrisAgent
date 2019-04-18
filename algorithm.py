@@ -81,8 +81,8 @@ class Algorithm:
 
             elite_matrix = elite_matrix.transpose()
             self.mu = np.mean(elite_matrix, 1)
-            a =np.cov(elite_matrix)
             self.sigma = np.diag(np.diag(np.cov(elite_matrix) + self.zt))
+
             if self.curr_best is None or self.curr_best[0] < elite[0][0]:
                 self.curr_best = elite[0]
             step += 1
@@ -106,7 +106,7 @@ mu = [0 for i in range(0, weights_num)]
 sigma = np.diag([100 for i in range(0, weights_num)])
 l = 1
 zt = 4
-n = 16
+n = 104
 f = open("weights.txt", "w")
 
 algorithm = Algorithm(mu, sigma, n, rho, zt, f)
