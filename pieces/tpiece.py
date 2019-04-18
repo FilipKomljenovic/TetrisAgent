@@ -74,7 +74,7 @@ class TPiece(Piece):
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height + 1][conf[0]] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
-                new_board[height + 2][conf[0]] = '1'
+                new_board[height + 2][conf[0] + 1] = '1'
 
         else:
             pass
@@ -107,7 +107,7 @@ class TPiece(Piece):
         return False
 
     def can_fall(self, height, column, rot):
-        for x in range(height, self.BOARDHEIGHT-2):
+        for x in range(height, self.BOARDHEIGHT - 2):
             if not self.check_conf(x, column, rot):
                 return False
         return True

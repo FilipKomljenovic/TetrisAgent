@@ -39,8 +39,8 @@ class Algorithm:
         step = 0
 
         while curr_best_ag[0] < 1000:
-            for i in range(0, self.N):
-                self.agents[i].weights = np.diag(self.sigma * np.random.randn(1, 8) + self.mu).tolist()
+            # for i in range(0, self.N):
+            #     self.agents[i].weights = np.diag(self.sigma * np.random.randn(1, 8) + self.mu).tolist()
 
             temp_results = []
 
@@ -81,7 +81,7 @@ class Algorithm:
 
             elite_matrix = elite_matrix.transpose()
             self.mu = np.mean(elite_matrix, 1)
-            self.sigma = np.diag(np.diag(np.cov(elite_matrix) + self.zt))
+            self.sigma = np.sqrt(np.diag(np.diag(np.cov(elite_matrix) + self.zt)))
 
             if self.curr_best is None or self.curr_best[0] < elite[0][0]:
                 self.curr_best = elite[0]
@@ -101,7 +101,7 @@ class Algorithm:
 
 
 weights_num = 8
-rho = 0.2
+rho = 0.1
 mu = [0 for i in range(0, weights_num)]
 sigma = np.diag([100 for i in range(0, weights_num)])
 l = 1

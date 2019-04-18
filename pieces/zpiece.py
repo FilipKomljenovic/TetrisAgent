@@ -64,10 +64,10 @@ class ZPiece(Piece):
 
     def check_conf(self, x, conf, rot):
         if rot == '0':
-            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x][conf] == '.' and \
-                    self.board[x + 1][conf] == '.' \
-                    and self.board[x + 1][conf + 1] == '.' \
-                    and self.board[x + 2][conf + 1] == '.':
+            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x+1][conf] == '.' and \
+                    self.board[x+1][conf + 1] == '.' \
+                    and self.board[x][conf + 1] == '.' \
+                    and self.board[x][conf + 2] == '.':
                 return True
         elif rot == '1':
             if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x][conf] == '.' and \

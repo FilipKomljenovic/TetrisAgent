@@ -33,7 +33,7 @@ class BoardStats:
         self.piece_position = piece_position
 
     def set_board(self, board):
-        self.board = board[::-1]
+        self.board = board
 
     def holes(self):
         sum = 0
@@ -60,20 +60,14 @@ class BoardStats:
 
     def hole_depth(self):
         sum = 0
-        flag = False
         for y in range(0, self.BOARDWIDTH):
-            highest = self.BOARDHEIGHT - self.highest_position(y)
-            for x in range(0, highest):
-                flag = False
+            for x in range(0, self.BOARDHEIGHT):
                 if self.board[x][y] == '.':
-                    for z in range(x + 1, highest):
+                    for z in range(x + 1, self.BOARDHEIGHT):
                         if self.board[z][y] != '.':
                             sum += 1
-                            flag = True
                         else:
                             break
-                    if flag:
-                        break
 
         return sum
 
@@ -179,4 +173,4 @@ class BoardStats:
         return self.clear_filled_rows()
 
     def clear_filled_rows(self):
-        return remove_complete_lines(self.board)
+        return remove_complete_lines(self.board[::-1])
