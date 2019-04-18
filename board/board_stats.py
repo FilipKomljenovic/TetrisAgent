@@ -8,7 +8,7 @@ class BoardStats:
     BOARDHEIGHT = 20
 
     def __init__(self, board, old_board=None, piece_position=None):
-        self.board = copy.deepcopy(board)[::-1]
+        self.board = copy.deepcopy(board)
         self.features = []
         if old_board is not None:
             self.old_board = old_board[::-1]

@@ -27,9 +27,10 @@ class OPiece(Piece):
         for x in range(0, self.BOARDHEIGHT):
             flag = False
             for i in range(conf[0], conf[1] + 1):
-                if conf[1] + 1 < self.BOARDWIDTH and self.board[x][i] == '.':
+                if conf[1] + 1 <= self.BOARDWIDTH and self.board[x][i] == '.':
                     if self.can_fall(x, conf[0]):
                         flag = True
+                        break
             if flag:
                 height = x
                 break

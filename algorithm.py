@@ -39,8 +39,8 @@ class Algorithm:
         step = 0
 
         while curr_best_ag[0] < 1000:
-            # for i in range(0, self.N):
-            #     self.agents[i].weights = np.diag(self.sigma * np.random.randn(1, 8) + self.mu).tolist()
+            for i in range(0, self.N):
+                self.agents[i].weights = np.diag(self.sigma * np.random.randn(1, 8) + self.mu).tolist()
 
             temp_results = []
 
