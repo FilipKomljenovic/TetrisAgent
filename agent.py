@@ -10,7 +10,7 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights = [i for i in range(0, 8)]
+        self.weights = [-134.95609009258413, 7.574861906443054, -68.66627769493407, -148.25588458720125, -51.410377831157135, -21.082964196262164, -57.234632707472386, -509.83802983118494]
         self.board_stats = BoardStats(board)
         self.r = 0
 

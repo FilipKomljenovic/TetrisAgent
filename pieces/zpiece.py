@@ -6,6 +6,9 @@ class ZPiece(Piece):
     rotations = [0, 1]
     HEIGHT = 3
     WIDTH = 2
+    LEFT_SIDE = 4
+    RIGHT_SIDE_FIRST = 5
+    RIGHT_SIDE_SEC = 6
 
     def __init__(self, shape, board):
         super().__init__(shape, board)
@@ -64,8 +67,8 @@ class ZPiece(Piece):
 
     def check_conf(self, x, conf, rot):
         if rot == '0':
-            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x+1][conf] == '.' and \
-                    self.board[x+1][conf + 1] == '.' \
+            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x + 1][conf] == '.' and \
+                    self.board[x + 1][conf + 1] == '.' \
                     and self.board[x][conf + 1] == '.' \
                     and self.board[x][conf + 2] == '.':
                 return True
@@ -85,9 +88,10 @@ class ZPiece(Piece):
             self.HEIGHT = 3
             self.WIDTH = 2
 
-        left = 4
-        right = 5 if self.WIDTH == 2 else 6
+        left = self.LEFT_SIDE
+        right = self.RIGHT_SIDE_FIRST if self.WIDTH == 2 else self.RIGHT_SIDE_SEC
         actions = []
+
         if not self.current_rotation == int(conf[2]):
             actions.append(self.ROTATE_LEFT)
         if column > right:
@@ -96,7 +100,7 @@ class ZPiece(Piece):
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
         return actions

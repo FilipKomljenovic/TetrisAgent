@@ -63,7 +63,7 @@ class OPiece(Piece):
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
 

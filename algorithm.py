@@ -8,7 +8,6 @@ from agent import Agent
 from evaluator import Evaluator
 
 N_JOBS = 8
-l = 1
 
 
 def work(id, agents, l):
@@ -19,14 +18,14 @@ def work(id, agents, l):
 
 
 class Algorithm:
-    l = 1
     WEIGHTS_NUM = 8
 
-    def __init__(self, mu, sigma, n, rho, zt, file):
+    def __init__(self, mu, sigma, n, l, rho, zt, file):
         self.evaluator = None
         self.mu = mu
         self.sigma = sigma
         self.N = n
+        self.l = l
         self.rho = rho
         self.zt = zt
         self.agents = [Agent() for i in range(0, n)]
@@ -47,33 +46,19 @@ class Algorithm:
             pool = mp.Pool(N_JOBS)
             for i in range(0, self.N, N_JOBS):
                 ids = [j for j in range(i, N_JOBS + i)]
-                result = [pool.apply_async(work, args=(id, self.agents, Algorithm.l)) for id in ids]
+                result = [pool.apply_async(work, args=(id, self.agents, self.l)) for id in ids]
                 output = [p.get() for p in result]
                 temp_results.append(output)
             pool.close()
             pool.join()
 
-            # while n < self.N:
-            #     ids = [i for i in range(n, N_JOBS + n)]
-            #     n += N_JOBS
-            #     temp_results.append(Parallel(n_jobs=N_JOBS, verbose=10, backend="multiprocessing")(
-            #         delayed(work)(id, self.agents, self.l) for id in ids))
-
             results = list(chain(*temp_results))
             results.sort(reverse=True)
             best_agents = self.rho * self.N
             elite = []
-            # sum = dict.fromkeys([i for i in range(0, self.WEIGHTS_NUM)], 0)
 
             for i in range(0, int(best_agents)):
                 elite.append((results[i]))
-
-            # for el in elite:
-            #     for col in range(0, self.WEIGHTS_NUM):
-            #         sum[col] += el[1][col]
-
-            # for i in range(0, self.WEIGHTS_NUM):
-            # self.mu[i] = (sum[i] / self.WEIGHTS_NUM)
 
             elite_matrix = np.zeros((int(best_agents), self.WEIGHTS_NUM))
             for i in range(0, len(elite)):
@@ -109,5 +94,5 @@ zt = 4
 n = 104
 f = open("weights.txt", "w")
 
-algorithm = Algorithm(mu, sigma, n, rho, zt, f)
+algorithm = Algorithm(mu, sigma, n, l, rho, zt, f)
 algorithm.run()

@@ -6,6 +6,10 @@ class LPiece(Piece):
     rotations = [0, 1, 2, 3]
     HEIGHT = 3
     WIDTH = 2
+    LEFT_SIDE_FIRST = 4
+    LEFT_SIDE_SEC = 5
+    RIGHT_SIDE_FIRST = 5
+    RIGHT_SIDE_SEC = 6
     rotations_0 = {'0': None, '1': (Piece.ROTATE_RIGHT,), '2': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT),
                    '3': (Piece.ROTATE_LEFT,)}
     rotations_1 = {'0': (Piece.ROTATE_LEFT,), '1': None, '2': (Piece.ROTATE_RIGHT,),
@@ -80,7 +84,7 @@ class LPiece(Piece):
         return new_board
 
     def can_fall(self, height, column, rot):
-        for x in range(height, self.BOARDHEIGHT-2):
+        for x in range(height, self.BOARDHEIGHT - 2):
             if not self.check_conf(x, column, rot):
                 return False
         return True
@@ -99,9 +103,9 @@ class LPiece(Piece):
                 return True
         elif rot == '2':
             if x + 1 < self.BOARDHEIGHT and conf + 2 < self.BOARDWIDTH and \
-                    self.board[x][conf] == '.' and self.board[x + 1][conf + 1] == '.' \
-                    and self.board[x + 1][conf + 2] == '.' \
-                    and self.board[x + 1][conf + 1] == '.':
+                    self.board[x][conf] == '.' and self.board[x + 1][conf] == '.' \
+                    and self.board[x + 1][conf + 1] == '.' \
+                    and self.board[x + 1][conf + 2] == '.':
                 return True
         elif rot == '3':
             if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and \
@@ -118,8 +122,9 @@ class LPiece(Piece):
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
-        left = 4 if self.WIDTH == 3 or conf[2] == '3' else 5
-        right = 5 if conf[2] == '3' else 6
+        left = self.LEFT_SIDE_FIRST if self.WIDTH == 3 or conf[2] == '3' else self.LEFT_SIDE_SEC
+        right = self.RIGHT_SIDE_FIRST if conf[2] == '3' else self.RIGHT_SIDE_SEC
+
         actions = []
         if not self.current_rotation == int(conf[2]):
             if self.current_rotation == 0:
@@ -141,7 +146,7 @@ class LPiece(Piece):
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
 

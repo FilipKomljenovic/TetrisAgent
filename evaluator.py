@@ -42,22 +42,23 @@ class Evaluator:
                 done = False
                 while not env.env.game.is_game_over:
                     board = env.env.game.board
-                    for piece in pieces.values():
-                        piece.set_board(board)
                     self.agent.set_board(board)
                     piece = pieces[next_piece['shape']]
                     piece.current_rotation = next_piece['rotation']
+                    piece.set_board(board)
                     self.agent.set_piece(piece)
                     step += 1
                     actions = self.agent.make_decision()
                     if len(actions) == 0:
                         state, reward, done, info = env.env.game.step(0)
-                    for action in actions:
-                        state, reward, done, info = env.env.game.step(action)
-                        if done:
-                            break
+                    else:
+                        env.env.game.steps(actions)
+                    # for action in actions:
+                    #     state, reward, done, info = env.env.game.step(action)
+                    #     if done:
+                    #         break
                     while env.env.game.falling_piece is not None and not done:
-                        state, reward, done, info = env.env.game.step(0)
+                        env.env.game._fall()
 
                     next_piece = env.env.game.next_piece
                 print("steps:", step)

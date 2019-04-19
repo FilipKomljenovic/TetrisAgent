@@ -7,6 +7,10 @@ class TPiece(Piece):
     rotations = [0, 1, 2, 3]
     HEIGHT = 2
     WIDTH = 3
+    LEFT_SIDE_FIRST = 5
+    LEFT_SIDE_SEC = 4
+    RIGHT_SIDE_FIRST = 5
+    RIGHT_SIDE_SEC = 6
     rotations_0 = {'0': None, '1': (Piece.ROTATE_RIGHT,), '2': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT),
                    '3': (Piece.ROTATE_LEFT,)}
     rotations_1 = {'0': (Piece.ROTATE_LEFT,), '1': None, '2': (Piece.ROTATE_RIGHT,),
@@ -61,10 +65,10 @@ class TPiece(Piece):
                 new_board[height][conf[0] + 2] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
             elif conf[2] == '1':
-                new_board[height][conf[0] + 1] = '1'
+                new_board[height][conf[0]] = '1'
                 new_board[height + 1][conf[0]] = '1'
                 new_board[height + 1][conf[0] + 1] = '1'
-                new_board[height + 2][conf[0] + 1] = '1'
+                new_board[height + 2][conf[0]] = '1'
             elif conf[2] == '2':
                 new_board[height][conf[0] + 1] = '1'
                 new_board[height + 1][conf[0]] = '1'
@@ -88,7 +92,7 @@ class TPiece(Piece):
                     and self.board[x + 1][conf + 1] == '.':
                 return True
         elif rot == '1':
-            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x][conf + 1] == '.' \
+            if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x][conf] == '.' \
                     and self.board[x + 1][conf] == '.' \
                     and self.board[x + 1][conf + 1] == '.' \
                     and self.board[x + 2][conf] == '.':
@@ -119,8 +123,9 @@ class TPiece(Piece):
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
-        left = 5 if conf[2] == '1' else 4
-        right = 5 if conf[2] == '1' else 6
+        left = self.LEFT_SIDE_FIRST if conf[2] == '1' else self.LEFT_SIDE_SEC
+        right = self.RIGHT_SIDE_FIRST if conf[2] == '1' else self.RIGHT_SIDE_SEC
+
         actions = []
         if not self.current_rotation == int(conf[2]):
             if self.current_rotation == 0:
@@ -142,7 +147,7 @@ class TPiece(Piece):
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
 

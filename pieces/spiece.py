@@ -6,6 +6,9 @@ class SPiece(Piece):
     rotations = [0, 1]
     HEIGHT = 2
     WIDTH = 3
+    LEFT_SIDE_FIRST = 5
+    LEFT_SIDE_SEC = 4
+    RIGHT_SIDE = 6
 
     def __init__(self, shape, board):
         super().__init__(shape, board)
@@ -70,8 +73,8 @@ class SPiece(Piece):
         elif rot == '1':
             if x + 2 < self.BOARDHEIGHT and conf + 1 < self.BOARDWIDTH and self.board[x][conf + 1] == '.' \
                     and self.board[x + 1][conf] == '.' \
-                    and self.board[x + 2][conf + 1] == '.' \
-                    and self.board[x + 1][conf + 1] == '.':
+                    and self.board[x + 1][conf + 1] == '.' \
+                    and self.board[x + 2][conf] == '.':
                 return True
         return False
 
@@ -82,19 +85,19 @@ class SPiece(Piece):
         else:
             self.HEIGHT = 3
             self.WIDTH = 2
-        left = 5 if self.WIDTH == 2 else 4
-        right = 6
+        left = self.LEFT_SIDE_FIRST if self.WIDTH == 2 else self.LEFT_SIDE_SEC
+        right = self.RIGHT_SIDE
+
         actions = []
         if not self.current_rotation == int(conf[2]):
             actions.append(self.ROTATE_RIGHT)
-
         if column > right:
             for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
 

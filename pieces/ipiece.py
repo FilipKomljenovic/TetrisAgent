@@ -6,6 +6,10 @@ class IPiece(Piece):
     rotations = [0, 1]
     HEIGHT = 4
     WIDTH = 1
+    LEFT_SIDE_FIRST = 3
+    LEFT_SIDE_SEC = 5
+    RIGHT_SIDE_FIRST = 6
+    RIGHT_SIDE_SEC = 5
 
     def __init__(self, shape, board):
         super().__init__(shape, board)
@@ -68,8 +72,9 @@ class IPiece(Piece):
         else:
             self.HEIGHT = 4
             self.WIDTH = 1
-        left = 3 if conf[2] == '1' else 5
-        right = 6 if conf[2] == '1' else 5
+        left = self.LEFT_SIDE_FIRST if conf[2] == '1' else self.LEFT_SIDE_SEC
+        right = self.RIGHT_SIDE_FIRST if conf[2] == '1' else self.RIGHT_SIDE_SEC
+
         actions = []
         if not self.current_rotation == int(conf[2]):
             actions.append(self.ROTATE_LEFT)
@@ -82,7 +87,7 @@ class IPiece(Piece):
         elif column < left:
             for i in range(0, left - column):
                 actions.append(self.LEFT)
-        elif column > left and column <= right:
+        elif left < column <= right:
             for i in range(left, left + (column - left)):
                 actions.append(self.RIGHT)
         return actions
