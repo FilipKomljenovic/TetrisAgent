@@ -1,8 +1,6 @@
 """Helper methods for a Tetris game state"""
 import random
-from ._constants.template import PIECES, TEMPLATEHEIGHT, TEMPLATEWIDTH, BLANK, J_SHAPE_TEMPLATE, L_SHAPE_TEMPLATE, \
-    I_SHAPE_TEMPLATE, O_SHAPE_TEMPLATE, T_SHAPE_TEMPLATE
-from ._constants.palette import PALETTE
+
 from ._constants.dimensions import (
     BOARDWIDTH,
     BOARDHEIGHT,
@@ -10,6 +8,8 @@ from ._constants.dimensions import (
     XMARGIN,
     TOPMARGIN,
 )
+from ._constants.palette import PALETTE
+from ._constants.template import PIECES, TEMPLATEHEIGHT, TEMPLATEWIDTH, BLANK, Z_SHAPE_TEMPLATE, S_SHAPE_TEMPLATE
 
 
 def level_and_fall_freq(
@@ -46,11 +46,8 @@ def new_piece() -> dict:
     import copy
     easy_figures = copy.deepcopy(PIECES)
     hard_figures = {
-        'J': J_SHAPE_TEMPLATE,
-        'L': L_SHAPE_TEMPLATE,
-        'I': I_SHAPE_TEMPLATE,
-        'O': O_SHAPE_TEMPLATE,
-        'T': T_SHAPE_TEMPLATE
+        'S': S_SHAPE_TEMPLATE,
+        'Z': Z_SHAPE_TEMPLATE
     }
     easy_figures.pop('S')
     easy_figures.pop('Z')
