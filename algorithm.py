@@ -85,14 +85,18 @@ class Algorithm:
         return self.agents
 
 
-weights_num = 8
-rho = 0.1
-mu = [0 for i in range(0, weights_num)]
-sigma = np.diag([100 for i in range(0, weights_num)])
-l = 1
-zt = 4
-n = 104
-f = open("weights.txt", "w")
+def run():
+    weights_num = 8
+    rho = 0.1
+    mu = [0 for i in range(0, weights_num)]
+    sigma = np.diag([100 for i in range(0, weights_num)])
+    l = 1
+    zt = 4
+    n = 104
+    f = open("weights.txt", "w")
+    algorithm = Algorithm(mu, sigma, n, l, rho, zt, f)
+    algorithm.run()
 
-algorithm = Algorithm(mu, sigma, n, l, rho, zt, f)
-algorithm.run()
+
+if __name__ == '__main__':
+    run()
