@@ -96,7 +96,12 @@ class BoardStats:
 
     def row_transitions(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT):
+        highest=0
+        for i in range(0,self.BOARDWIDTH):
+            temp=self.highest_position(i)
+            if temp>highest:
+                highest=temp
+        for x in range(0, highest):
             for y in range(0, self.BOARDWIDTH):
                 if y == 0 or y == self.BOARDWIDTH - 1:
                     if self.board[x][y] == '.':
@@ -109,9 +114,9 @@ class BoardStats:
 
     def column_transitions(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT):
+        for x in range(0, self.BOARDHEIGHT-1):
             for y in range(0, self.BOARDWIDTH):
-                if x == 0 or x == self.BOARDHEIGHT - 1:
+                if x == 0:
                     if self.board[x][y] == '.':
                         sum += 1
                         continue
@@ -144,10 +149,7 @@ class BoardStats:
         return sum(range(1, depth + 1))
 
     def landing_height(self):
-        if self.piece_position[0] < self.piece_position[2]:
-            return self.piece_position[0]
-        else:
-            return self.piece_position[2] + 1
+        return self.piece_position[2] + 1
 
     def eroded_piece_cells(self):
         eliminated_rows = 0
