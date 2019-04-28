@@ -10,7 +10,7 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights = [-134.95609009258413, 7.574861906443054, -68.66627769493407, -148.25588458720125, -51.410377831157135, -21.082964196262164, -57.234632707472386, -509.83802983118494]
+        self.weights = [-1,1,-1,-1,-4,-1,0,0]
         self.board_stats = BoardStats(board)
         self.r = 0
 
@@ -47,24 +47,24 @@ class Agent:
 
     def find_piece_position(self, board, new_board):
         positions = []
-        for x in range(0, self.BOARDHEIGHT - 1):
-            for y in range(0, self.BOARDWIDTH - 1):
-                if not board[x][y] == new_board[x][y]:
-                    positions.append((x, y))
-        x0 = self.BOARDHEIGHT
-        y0 = self.BOARDWIDTH
+        for y in range(0, self.BOARDHEIGHT):
+            for x in range(0, self.BOARDWIDTH):
+                if not board[y][x] == new_board[y][x]:
+                    positions.append((y, x))
+        x0 = self.BOARDWIDTH
+        y0 = self.BOARDHEIGHT
         x1 = 0
         y1 = 0
         for pos in positions:
-            if pos[0] < x0:
-                x0 = pos[0]
-            if pos[1] < y0:
+            if pos[0] < y0:
+                y0 = pos[0]
+            if pos[1] < x0:
                 y0 = pos[1]
-            if pos[0] > x1:
-                x1 = pos[0]
-            if pos[1] > y1:
-                y1 = pos[1]
-        return x0, y0, x1, y1
+            if pos[0] > y1:
+                y1 = pos[0]
+            if pos[1] > x1:
+                x1 = pos[1]
+        return y0,x0,y1,x1
 
     def make_decision(self):
         self.generate_configurations()
