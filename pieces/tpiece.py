@@ -124,7 +124,7 @@ class TPiece(Piece):
             self.HEIGHT = 3
             self.WIDTH = 2
         left = self.LEFT_SIDE_FIRST if conf[2] == '1' else self.LEFT_SIDE_SEC
-        right = self.RIGHT_SIDE_FIRST if conf[2] == '1' else self.RIGHT_SIDE_SEC
+        right = self.RIGHT_SIDE_FIRST if conf[2] == '3' else self.RIGHT_SIDE_SEC
 
         actions = []
         if not self.current_rotation == int(conf[2]):
