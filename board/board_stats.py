@@ -37,10 +37,16 @@ class BoardStats:
 
     def holes(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT - 1):
+        for x in range(0, self.BOARDHEIGHT):
             for y in range(0, self.BOARDWIDTH):
-                if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
-                    sum += 1
+                if self.board[x][y] == '.':
+                    flag=False
+                    for i in range(x+1,self.BOARDHEIGHT):
+                        if self.board[i][y]!='.':
+                            flag=True
+                            break
+                    if flag:
+                        sum += 1
         return sum
 
     def rows_with_holes(self):
@@ -114,12 +120,14 @@ class BoardStats:
 
     def column_transitions(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT-1):
+        for x in range(0, self.BOARDHEIGHT):
             for y in range(0, self.BOARDWIDTH):
                 if x == 0:
                     if self.board[x][y] == '.':
                         sum += 1
                         continue
+                if x==self.BOARDHEIGHT-1:
+                    continue
                 elif ((self.board[x][y] != '.' and self.board[x + 1][y] == '.') or (
                         self.board[x][y] != '.' and self.board[x - 1][y] == '.')):
                     sum += 1

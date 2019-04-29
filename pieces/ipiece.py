@@ -78,11 +78,8 @@ class IPiece(Piece):
         actions = []
         if not self.current_rotation == int(conf[2]):
             actions.append(self.ROTATE_LEFT)
-            if conf[2] == '1':
-                left = 3
-                right = 6
         if column > right:
-            for i in range(right, column):
+            for i in range(right, column+ self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):

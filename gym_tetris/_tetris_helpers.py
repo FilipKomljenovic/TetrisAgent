@@ -14,8 +14,8 @@ from ._constants.template import PIECES, TEMPLATEHEIGHT, TEMPLATEWIDTH, BLANK, Z
 
 def level_and_fall_freq(
         complete_lines: float,
-        base_speed: float = 0.1,
-        speed_limit: float = 0.1,
+        base_speed: float=1.0,
+        speed_limit: float=1.0,
 ) -> tuple:
     """
     Return the level the player is on based on number of complete lines.
@@ -37,7 +37,7 @@ def level_and_fall_freq(
     # reset the fall_frequency if it's below the speed limit
     if fall_freq < speed_limit:
         fall_freq = speed_limit
-
+    fall_freq = 0.1
     return level, fall_freq
 
 
@@ -45,22 +45,22 @@ def new_piece() -> dict:
     """Return a random new piece in a random rotation."""
     import copy
     easy_figures = copy.deepcopy(PIECES)
-    hard_figures = {
+    '''hard_figures = {
         'S': S_SHAPE_TEMPLATE,
         'Z': Z_SHAPE_TEMPLATE
     }
     easy_figures.pop('S')
-    easy_figures.pop('Z')
-    if random.random() > 6 / 11:
-        shape = random.choice(list(easy_figures.keys()))
-    else:
-        shape = random.choice(list(hard_figures.keys()))
+    easy_figures.pop('Z')'''
+    # if random.random() > 6 / 11:
+    shape = random.choice(list(easy_figures.keys()))
+    '''else:
+        shape = random.choice(list(hard_figures.keys()))'''
     # start the new piece above the board (i.e. y < 0)
     return {
         'shape': shape,
         'rotation': random.randint(0, len(PIECES[shape]) - 1),
         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-        'y': -2,
+        'y':-2,
         'color': PALETTE[shape]
     }
 
@@ -110,8 +110,8 @@ def is_on_board(x: int, y: int) -> bool:
 def is_valid_position(
         board: list,
         piece: dict,
-        adj_x: int = 0,
-        adj_y: int = 0
+        adj_x: int=0,
+        adj_y: int=0
 ) -> bool:
     """
     Return True if the piece is within the board and not colliding.

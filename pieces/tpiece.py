@@ -15,8 +15,8 @@ class TPiece(Piece):
                    '3': (Piece.ROTATE_LEFT,)}
     rotations_1 = {'0': (Piece.ROTATE_LEFT,), '1': None, '2': (Piece.ROTATE_RIGHT,),
                    '3': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT)}
-    rotations_2 = {'0': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT), '1': (Piece.ROTATE_RIGHT,), '2': None,
-                   '3': (Piece.ROTATE_LEFT,)}
+    rotations_2 = {'0': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT), '1': (Piece.ROTATE_LEFT,), '2': None,
+                   '3': (Piece.ROTATE_RIGHT,)}
     rotations_3 = {'0': (Piece.ROTATE_RIGHT,), '1': (Piece.ROTATE_RIGHT, Piece.ROTATE_RIGHT), '2': (Piece.ROTATE_LEFT,),
                    '3': None}
 
