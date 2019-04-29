@@ -10,7 +10,8 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights = [-1,1,-1,-1,-4,-1,0,0]
+        self.weights =  [i for i in range(0,8)]
+        #[-12.63,6.6,-9.22,-19.77,-13.08,-10.49,-1.61,-24.04]
         self.board_stats = BoardStats(board)
         self.r = 0
 
@@ -38,7 +39,7 @@ class Agent:
             r = self.board_stats.calculate_r()
             features = self.board_stats.calculate_features()
             self.board_stats.set_board(self.board)
-
+            
             for i in range(0, len(features)):
                 reward += self.weights[i] * features[i]
             rewards.append((reward, conf, r))
@@ -59,7 +60,7 @@ class Agent:
             if pos[0] < y0:
                 y0 = pos[0]
             if pos[1] < x0:
-                y0 = pos[1]
+                x0 = pos[1]
             if pos[0] > y1:
                 y1 = pos[0]
             if pos[1] > x1:

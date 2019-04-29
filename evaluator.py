@@ -11,11 +11,12 @@ from pieces.zpiece import ZPiece
 
 
 class Evaluator:
+    
     def __init__(self, id, agent=None):
         self.agent = agent
         self.id = id
         self.games_num = 1
-
+        self.seed=None
     def set_agent(self, agent):
         self.agent = agent
 
@@ -24,6 +25,8 @@ class Evaluator:
 
     def evaluate(self):
         env = gym_tetris.make("Tetris-v0")
+        if self.seed is not None:
+            env.env.seed(self.seed)
         try:
             env.reset()
             opiece = OPiece("O", env.env.game.board)
@@ -59,7 +62,8 @@ class Evaluator:
                     #         break
                     while env.env.game.falling_piece is not None and not done:
                         env.env.game._fall()
-
+                    if(step>0 and step%1000==0):
+                        print("* ",step)
                     next_piece = env.env.game.next_piece
                 print("steps:", step)
                 print("r:", self.agent.r)
