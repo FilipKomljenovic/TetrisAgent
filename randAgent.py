@@ -1,7 +1,7 @@
 import sys
 import timeit
 from random import randrange
-from ale_python_interface import ALEInterface
+# from ale import ALEInterface
 
 if len(sys.argv) < 2:
   print('Usage: %s rom_file' % sys.argv[0])

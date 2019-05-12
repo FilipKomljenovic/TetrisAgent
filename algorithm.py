@@ -1,22 +1,22 @@
 import datetime
+import multiprocessing
 import multiprocessing as mp
+import sys
 from itertools import chain
-from sys import maxsize
+
 import numpy as np
 
 from agent import Agent
 from evaluator import Evaluator
 
-N_JOBS = 4
+N_JOBS = multiprocessing.cpu_count()
 
 
-def work(id, weights, l,seed):
-    evaluator = Evaluator(id)
-    agent=Agent()
-    agent.weights=weights[:]
-    evaluator.set_agent(agent)
-    evaluator.set_games_num(l)
-    evaluator.seed=seed
+def work(id, weights, l, seed):
+    agent = Agent()
+    agent.weights = weights[:]
+    evaluator = Evaluator(id, agent, l)
+    evaluator.seed = seed[:]
     return evaluator.evaluate()
 
 
@@ -39,16 +39,16 @@ class Algorithm:
     def run(self):
         curr_best_ag = (0, 0)
         step = 0
-        
+
         while curr_best_ag[0] < 1000:
             for i in range(0, self.N):
-                self.agents[i].weights = np.random.multivariate_normal(self.mu,self.sigma).tolist()
+                self.agents[i].weights = np.random.multivariate_normal(self.mu, self.sigma).tolist()
 
             temp_results = []
-            seed=np.random.randint(2<<30)
+            seed = [np.random.randint(2 << 30) for i in range(0, self.l)]
             pool = mp.Pool(N_JOBS)
             ids = [j for j in range(0, self.N)]
-            result = [pool.apply_async(work, args=(id, self.agents[id].weights, self.l,seed)) for id in ids]
+            result = [pool.apply_async(work, args=(id, self.agents[id].weights, self.l, seed)) for id in ids]
             output = [p.get() for p in result]
             temp_results.append(output)
             pool.close()
@@ -58,7 +58,7 @@ class Algorithm:
             results.sort(reverse=True)
             best_agents = self.rho * self.N
             elite = []
-            
+
             for i in range(0, int(best_agents)):
                 elite.append((results[i]))
 
@@ -73,16 +73,18 @@ class Algorithm:
             if self.curr_best is None or self.curr_best[0] < elite[0][0]:
                 self.curr_best = elite[0]
             step += 1
-            rew=[res[0] for res in results]
-            print("mu:",np.mean(rew)," var:",np.std(rew),"\n",rew,"\n")
-            if step % 2 == 0:
-                self.file.write(''.join(map(str, self.curr_best)))
-                self.file.write("\n")
-                self.file.write(' '.join(["mu:",str(np.mean(rew))," var:",str(np.std(rew))]))
-                self.file.write(' '.join(["\n",str(rew),"\n"]))
-                self.file.write(str(datetime.datetime.now()))
-                self.file.write("\n")
-                self.file.flush()
+            rew = [res[0] for res in results]
+            mu_pop = np.mean(rew)
+            var_pop = np.std(rew)
+            print("mu:", mu_pop, " var:", var_pop, "\n", rew, "\n")
+
+            self.file.write(''.join(map(str, self.curr_best)))
+            self.file.write("\n")
+            self.file.write(''.join(["mu:", str(mu_pop), " var:", str(var_pop)]))
+            self.file.write(''.join(["\n", str(rew), "\n"]))
+            self.file.write(str(datetime.datetime.now()))
+            self.file.write("\n")
+            self.file.flush()
 
         self.file.close()
 
@@ -92,12 +94,25 @@ class Algorithm:
 
 def run():
     weights_num = 8
+    x = input('If you want to enter the initial parameters for algorithm, press Y, otherwise press any key\n').lower()
+    if x.lower() == 'y':
+        try:
+            f = open(input('Please give path to file with parameters.\n'), 'r')
+            a = list(f)
+            mu = [float(a[0].rstrip()) for i in range(0, weights_num)]
+            sigma = np.diag([float(a[1].rstrip()) for i in range(0, weights_num)])
+            n = int(a[2].rstrip())
+            f.close()
+        except:
+            print('Error while reading file.')
+            sys.exit(0)
+    else:
+        mu = [0 for i in range(0, weights_num)]
+        sigma = np.diag([100 for i in range(0, weights_num)])
+        n = 100
     rho = 0.1
-    mu = [0 for i in range(0, weights_num)]
-    sigma = np.diag([100 for i in range(0, weights_num)])
-    l = 1
+    l = 3
     zt = 4
-    n = 52
     f = open("weights.txt", "w")
     algorithm = Algorithm(mu, sigma, n, l, rho, zt, f)
     algorithm.run()

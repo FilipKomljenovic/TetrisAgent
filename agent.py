@@ -1,5 +1,4 @@
 from board.board_stats import BoardStats
-import random
 
 
 class Agent:
@@ -10,8 +9,8 @@ class Agent:
         self.board = board[::-1]
         self.piece = piece
         self.configurations = []
-        self.weights =  [i for i in range(0,8)]
-        #[-12.63,6.6,-9.22,-19.77,-13.08,-10.49,-1.61,-24.04]
+        self.weights = [i for i in range(0, 8)]
+        # [-12.63,6.6,-9.22,-19.77,-13.08,-10.49,-1.61,-24.04]
         self.board_stats = BoardStats(board)
         self.r = 0
 
@@ -39,7 +38,7 @@ class Agent:
             r = self.board_stats.calculate_r()
             features = self.board_stats.calculate_features()
             self.board_stats.set_board(self.board)
-            
+
             for i in range(0, len(features)):
                 reward += self.weights[i] * features[i]
             rewards.append((reward, conf, r))
@@ -65,7 +64,7 @@ class Agent:
                 y1 = pos[0]
             if pos[1] > x1:
                 x1 = pos[1]
-        return y0,x0,y1,x1
+        return y0, x0, y1, x1
 
     def make_decision(self):
         self.generate_configurations()

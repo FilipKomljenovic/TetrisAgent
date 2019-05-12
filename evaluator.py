@@ -11,12 +11,14 @@ from pieces.zpiece import ZPiece
 
 
 class Evaluator:
-    
-    def __init__(self, id, agent=None):
+
+    def __init__(self, id, agent=None, games_num=None):
         self.agent = agent
         self.id = id
-        self.games_num = 1
-        self.seed=None
+        self.games_num = games_num
+        self.seed = None
+        self.r = 0
+
     def set_agent(self, agent):
         self.agent = agent
 
@@ -25,8 +27,6 @@ class Evaluator:
 
     def evaluate(self):
         env = gym_tetris.make("Tetris-v0")
-        if self.seed is not None:
-            env.env.seed(self.seed)
         try:
             env.reset()
             opiece = OPiece("O", env.env.game.board)
@@ -40,6 +40,8 @@ class Evaluator:
             start = timeit.default_timer()
             step = 0
             for i in range(self.games_num):
+                if self.seed is not None:
+                    env.env.seed(self.seed[i])
                 env.reset()
                 next_piece = env.env.game.falling_piece
                 done = False
@@ -56,22 +58,18 @@ class Evaluator:
                         state, reward, done, info = env.env.game.step(0)
                     else:
                         env.env.game.steps(actions)
-                    # for action in actions:
-                    #     state, reward, done, info = env.env.game.step(action)
-                    #     if done:
-                    #         break
                     while env.env.game.falling_piece is not None and not done:
                         env.env.game._fall()
-                    if(step>0 and step%1000==0):
-                        print("* ",step)
+                    if step > 0 and step % 1000 == 0:
+                        print("* ", step)
                     next_piece = env.env.game.next_piece
-                print("steps:", step)
-                print("r:", self.agent.r)
+                self.r += self.agent.r
 
             print("id:", self.id)
+            print("r:", self.r)
             stop = timeit.default_timer()
             print('Time: ', stop - start)
             print('\n')
         finally:
             env.env.close()
-            return self.agent.r, self.agent.weights
+            return self.r, self.agent.weights
