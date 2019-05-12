@@ -1,5 +1,4 @@
 from pieces.piece import Piece
-import copy
 
 
 class JPiece(Piece):
@@ -41,7 +40,7 @@ class JPiece(Piece):
         return self.configurations
 
     def generate_board(self, conf, board):
-        new_board = copy.deepcopy(board)
+        new_board = [i[:] for i in board]
         height = 0
         if conf[2] == '0' or conf[2] == '2':
             self.HEIGHT = 2

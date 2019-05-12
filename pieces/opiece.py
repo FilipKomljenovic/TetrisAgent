@@ -1,5 +1,4 @@
 from pieces.piece import Piece
-import copy
 
 
 class OPiece(Piece):
@@ -22,7 +21,7 @@ class OPiece(Piece):
         return self.configurations
 
     def generate_board(self, conf, board):
-        new_board = copy.deepcopy(board)
+        new_board = [i[:] for i in board]
         height = 0
         for x in range(0, self.BOARDHEIGHT):
             flag = False

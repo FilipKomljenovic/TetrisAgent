@@ -1,5 +1,4 @@
 from pieces.piece import Piece
-import copy
 
 
 class IPiece(Piece):
@@ -26,7 +25,7 @@ class IPiece(Piece):
         return self.configurations
 
     def generate_board(self, conf, board):
-        new_board = copy.deepcopy(board)
+        new_board = [i[:] for i in board]
         height = 0
         if not conf[2] == '0':
             self.HEIGHT = 1
@@ -79,7 +78,7 @@ class IPiece(Piece):
         if not self.current_rotation == int(conf[2]):
             actions.append(self.ROTATE_LEFT)
         if column > right:
-            for i in range(right, column+ self.WIDTH - 1):
+            for i in range(right, column + self.WIDTH - 1):
                 actions.append(self.RIGHT)
         elif column < left:
             for i in range(0, left - column):

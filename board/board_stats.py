@@ -1,5 +1,3 @@
-import copy
-
 from gym_tetris._tetris_helpers import remove_complete_lines
 
 
@@ -8,7 +6,7 @@ class BoardStats:
     BOARDHEIGHT = 20
 
     def __init__(self, board, old_board=None, piece_position=None):
-        self.board = copy.deepcopy(board)
+        self.board = [i[:] for i in board]
         self.features = []
         if old_board is not None:
             self.old_board = old_board[::-1]
@@ -20,16 +18,17 @@ class BoardStats:
     def calculate_features(self):
         self.features.append(self.row_transitions())
         self.features.append(self.column_transitions())
-        self.features.append(self.holes())
+        h, rwh, hd = self.holes()
+        self.features.append(h)
         self.features.append(self.board_wells())
-        self.features.append(self.hole_depth())
-        self.features.append(self.rows_with_holes())
+        self.features.append(hd)
+        self.features.append(rwh)
 
         return self.features
 
     def reset(self, old_board, board, piece_position):
         self.old_board = old_board
-        self.board = copy.deepcopy(board)
+        self.board = [i[:] for i in board]
         self.piece_position = piece_position
 
     def set_board(self, board):
@@ -37,17 +36,23 @@ class BoardStats:
 
     def holes(self):
         sum = 0
-        for x in range(0, self.BOARDHEIGHT):
+        rows = set()
+        highest = {i: False for i in range(self.BOARDWIDTH)}
+        depth = [0] * self.BOARDWIDTH
+        holedepth = 0
+        for x in range(self.BOARDHEIGHT - 2, -1, -1):
             for y in range(0, self.BOARDWIDTH):
-                if self.board[x][y] == '.':
-                    flag=False
-                    for i in range(x+1,self.BOARDHEIGHT):
-                        if self.board[i][y]!='.':
-                            flag=True
-                            break
-                    if flag:
+                if highest[y]:
+                    if self.board[x][y] == '.':
                         sum += 1
-        return sum
+                        rows.add(x)
+                        if self.board[x + 1][y] != '.':
+                            holedepth += depth[y]
+                            depth[y] = 0
+                elif self.board[x][y] != '.':
+                    depth[y] += 1
+                    highest[y] = True
+        return sum, len(rows), holedepth
 
     def rows_with_holes(self):
         sum = 0
@@ -102,11 +107,11 @@ class BoardStats:
 
     def row_transitions(self):
         sum = 0
-        highest=0
-        for i in range(0,self.BOARDWIDTH):
-            temp=self.highest_position(i)
-            if temp>highest:
-                highest=temp
+        highest = 0
+        for i in range(0, self.BOARDWIDTH):
+            temp = self.highest_position(i)
+            if temp > highest:
+                highest = temp
         for x in range(0, highest):
             for y in range(0, self.BOARDWIDTH):
                 if y == 0 or y == self.BOARDWIDTH - 1:
@@ -126,7 +131,7 @@ class BoardStats:
                     if self.board[x][y] == '.':
                         sum += 1
                         continue
-                if x==self.BOARDHEIGHT-1:
+                if x == self.BOARDHEIGHT - 1:
                     continue
                 elif ((self.board[x][y] != '.' and self.board[x + 1][y] == '.') or (
                         self.board[x][y] != '.' and self.board[x - 1][y] == '.')):
