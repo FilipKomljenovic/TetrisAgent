@@ -118,6 +118,7 @@ class Tetris(object):
             None
 
         """
+        # return
         # don't draw empty boxes
         if color == BLANK:
             return
@@ -142,6 +143,7 @@ class Tetris(object):
             None
 
         """
+        # return
         # draw the border
         pygame.draw.rect(self._screen, BORDERCOLOR, BORDER_DIMS, 3)
         # fill the background of the board
@@ -163,6 +165,7 @@ class Tetris(object):
             None
 
         """
+        # return
         # draw the score label
         score_label_surf = self._font.render(SCORE_LABEL, True, TEXTCOLOR)
         score_label_rect = score_label_surf.get_rect()
@@ -201,6 +204,7 @@ class Tetris(object):
             None
 
         """
+        # return
         # get the template of the piece based on shape and rotation
         shape_to_draw = PIECES[piece['shape']][piece['rotation']]
         # if pixel_x & pixel_y are None, use the pieces internal location
@@ -225,6 +229,7 @@ class Tetris(object):
             None
 
         """
+        # return
         # draw the "next" label
         next_surf = self._font.render(NEXT_LABEL, True, TEXTCOLOR)
         next_rect = next_surf.get_rect()
@@ -352,7 +357,8 @@ class Tetris(object):
                 if not is_valid_position(self.board, self.falling_piece):
                     self.is_game_over = True
                     info = {'score': self.score, 'height': BOARDHEIGHT}
-                    return self.screen, 0, True, info
+                    return None, 0, True, info
+                    # self.screen, 0, True, info
             self.actions[ac]()
 
     def step(self, action: int) -> None:
@@ -377,7 +383,8 @@ class Tetris(object):
             if not is_valid_position(self.board, self.falling_piece):
                 self.is_game_over = True
                 info = {'score': self.score, 'height': BOARDHEIGHT}
-                return self.screen, 0, True, info
+                return None, 0, True, info
+                # self.screen, 0, True, info
 
         # unwrap the action and call it
         self.actions[action]()
@@ -400,7 +407,8 @@ class Tetris(object):
         self.frame += 1
 
         info = {'score': self.score, 'height': height}
-        return self.screen, reward, False, info
+        return None, reward, False, info
+        # self.screen, reward, False, info
 
 
 # explicitly define the outward facing API of this module
