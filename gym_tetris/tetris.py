@@ -118,7 +118,7 @@ class Tetris(object):
             None
 
         """
-        # return
+        return
         # don't draw empty boxes
         if color == BLANK:
             return
@@ -143,7 +143,7 @@ class Tetris(object):
             None
 
         """
-        # return
+        return
         # draw the border
         pygame.draw.rect(self._screen, BORDERCOLOR, BORDER_DIMS, 3)
         # fill the background of the board
@@ -165,7 +165,7 @@ class Tetris(object):
             None
 
         """
-        # return
+        return
         # draw the score label
         score_label_surf = self._font.render(SCORE_LABEL, True, TEXTCOLOR)
         score_label_rect = score_label_surf.get_rect()
@@ -204,7 +204,7 @@ class Tetris(object):
             None
 
         """
-        # return
+        return
         # get the template of the piece based on shape and rotation
         shape_to_draw = PIECES[piece['shape']][piece['rotation']]
         # if pixel_x & pixel_y are None, use the pieces internal location
@@ -229,7 +229,7 @@ class Tetris(object):
             None
 
         """
-        # return
+        return
         # draw the "next" label
         next_surf = self._font.render(NEXT_LABEL, True, TEXTCOLOR)
         next_rect = next_surf.get_rect()
