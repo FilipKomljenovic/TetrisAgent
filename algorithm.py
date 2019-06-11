@@ -9,7 +9,7 @@ import numpy as np
 from agent import Agent
 from evaluator import Evaluator
 
-N_JOBS = multiprocessing.cpu_count()
+N_JOBS = 7
 
 
 def work(id, weights, l, seed):
@@ -36,19 +36,19 @@ class Algorithm:
         self.file = file
         self.curr_best = None
 
-    def run(self):
+    def run(self, eps_score=1000):
         curr_best_ag = (0, 0)
         step = 0
 
-        while curr_best_ag[0] < 1000:
+        while curr_best_ag[0] < eps_score:
             for i in range(0, self.N):
                 self.agents[i].weights = np.random.multivariate_normal(self.mu, self.sigma).tolist()
 
             temp_results = []
-            seed = [np.random.randint(2 << 30) for i in range(0, self.l)]
+            seed = [np.random.randint(2 << 30) for _ in range(0, self.l)]
             pool = mp.Pool(N_JOBS)
             ids = [j for j in range(0, self.N)]
-            result = [pool.apply_async(work, args=(id, self.agents[id].weights, self.l, seed)) for id in ids]
+            result = [pool.apply_async(work, args=(uid, self.agents[uid].weights, self.l, seed)) for uid in ids]
             output = [p.get() for p in result]
             temp_results.append(output)
             pool.close()
@@ -99,8 +99,8 @@ def run():
         try:
             f = open(input('Please give path to file with parameters.\n'), 'r')
             a = list(f)
-            mu = [float(a[0].rstrip()) for i in range(0, weights_num)]
-            sigma = np.diag([float(a[1].rstrip()) for i in range(0, weights_num)])
+            mu = [float(i) for i in a[0].split(' ')]
+            sigma = np.diag([float(i) for i in a[1].split(' ')])
             n = int(a[2].rstrip())
             f.close()
         except:

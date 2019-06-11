@@ -35,7 +35,7 @@ class BoardStats:
         self.board = board
 
     def holes(self):
-        sum = 0
+        holes_sum = 0
         rows = set()
         highest = {i: False for i in range(self.BOARDWIDTH)}
         depth = [0] * self.BOARDWIDTH
@@ -44,7 +44,7 @@ class BoardStats:
             for y in range(0, self.BOARDWIDTH):
                 if highest[y]:
                     if self.board[x][y] == '.':
-                        sum += 1
+                        holes_sum += 1
                         rows.add(x)
                         if self.board[x + 1][y] != '.':
                             holedepth += depth[y]
@@ -52,16 +52,16 @@ class BoardStats:
                 elif self.board[x][y] != '.':
                     depth[y] += 1
                     highest[y] = True
-        return sum, len(rows), holedepth
+        return holes_sum, len(rows), holedepth
 
     def rows_with_holes(self):
-        sum = 0
+        holes_sum = 0
         for x in range(0, self.BOARDHEIGHT - 1):
             for y in range(0, self.BOARDWIDTH):
                 if self.board[x][y] == '.' and self.board[x + 1][y] != '.':
-                    sum += 1
+                    holes_sum += 1
                     break
-        return sum
+        return holes_sum
 
     def highest_position(self, y):
         for x in range(self.BOARDHEIGHT - 1, 0, -1):
