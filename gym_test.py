@@ -10,6 +10,7 @@ from pieces.spiece import SPiece
 from pieces.tpiece import TPiece
 from pieces.zpiece import ZPiece
 
+#weights from training
 WEIGHTS1 = [-12.63, 6.6, -9.22, -19.77, -13.08, -10.49, -1.61, -24.04]
 WEIGHTS2 = [-1, 1, -1, -1, -4, -1, 0, 0]
 WEIGHTS3 = [-13.318163804976432, 7.95160617283945, -3.6283161669334527, -10.029501634364504, -20.94470047692427,
@@ -58,10 +59,6 @@ for i in range(10):
             state, reward, done, info = env.env.game.step(0)
             env.render('human')
         b = timeit.default_timer()
-        # if info['score'] % 50 == 0:
-        #     print(info['score'])
-        # if step % 50 == 0:
-        #     print('Brzina padanja: ', b - a, " Visina padanja: ", info['height'])
         next_piece = env.env.game.next_piece
     step = 0
     print(agent.r)
